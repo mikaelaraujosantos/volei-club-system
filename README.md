@@ -9,6 +9,14 @@ Sistema de gestão de time de vôlei com:
 - Painel administrativo
 
 ---
+##  Objetivo do projeto
+
+Este projeto tem como principal objetivo o meu aprendizado prático em desenvolvimento web full stack,
+incluindo React, Spring Boot, autenticação, integração com banco de dados e sistemas de pagamento.
+
+O sistema também simula uma aplicação real de gestão de time esportivo na qual eu faço parte.
+
+---
 
 ##  Tecnologias
 
@@ -29,4 +37,4 @@ Sistema de gestão de time de vôlei com:
 
 ##  Status do projeto
 
-Em desenvolvimento 🚧
+Em desenvolvimento...
