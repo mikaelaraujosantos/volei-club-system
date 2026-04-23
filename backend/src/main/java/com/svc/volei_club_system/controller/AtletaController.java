@@ -3,12 +3,16 @@ package com.svc.volei_club_system.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.svc.volei_club_system.dto.*;
+import com.svc.volei_club_system.mapper.AtletaMapper;
 import com.svc.volei_club_system.model.AtletaModel;
 import com.svc.volei_club_system.service.AtletaService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/atletas")
@@ -22,18 +26,24 @@ public class AtletaController {
     // =========================
 
     @PostMapping
-    public AtletaModel cadastrar(
-            @RequestBody AtletaModel atleta,
+    public AtletaDTO cadastrar(
+           @Valid @RequestBody AtletaCreateDTO dto,
             HttpServletRequest request
     ) {
 
         String email =
                 (String) request.getAttribute("email");
 
-        return atletaService.cadastrarAtleta(
-                atleta,
-                email
-        );
+        AtletaModel atleta =
+                AtletaMapper.toModel(dto);
+
+        AtletaModel salvo =
+                atletaService.cadastrarAtleta(
+                        atleta,
+                        email
+                );
+
+        return AtletaMapper.toDTO(salvo);
 
     }
 
@@ -42,14 +52,18 @@ public class AtletaController {
     // =========================
 
     @GetMapping
-    public List<AtletaModel> listar(
+    public List<AtletaDTO> listar(
             HttpServletRequest request
     ) {
 
         String email =
                 (String) request.getAttribute("email");
 
-        return atletaService.listarAtletas(email);
+        return atletaService
+                .listarAtletas(email)
+                .stream()
+                .map(AtletaMapper::toDTO)
+                .collect(Collectors.toList());
 
     }
 
@@ -58,7 +72,7 @@ public class AtletaController {
     // =========================
 
     @GetMapping("/{id}")
-    public AtletaModel buscarPorId(
+    public AtletaDTO buscarPorId(
             @PathVariable Long id,
             HttpServletRequest request
     ) {
@@ -66,10 +80,13 @@ public class AtletaController {
         String email =
                 (String) request.getAttribute("email");
 
-        return atletaService.buscarPorId(
-                id,
-                email
-        );
+        AtletaModel atleta =
+                atletaService.buscarPorId(
+                        id,
+                        email
+                );
+
+        return AtletaMapper.toDTO(atleta);
 
     }
 
@@ -78,20 +95,26 @@ public class AtletaController {
     // =========================
 
     @PutMapping("/{id}")
-    public AtletaModel atualizar(
+    public AtletaDTO atualizar(
             @PathVariable Long id,
-            @RequestBody AtletaModel atleta,
+            @RequestBody AtletaUpdateDTO dto,
             HttpServletRequest request
     ) {
 
         String email =
                 (String) request.getAttribute("email");
 
-        return atletaService.atualizarAtleta(
-                id,
-                atleta,
-                email
-        );
+        AtletaModel dados =
+                AtletaMapper.toModel(dto);
+
+        AtletaModel atualizado =
+                atletaService.atualizarAtleta(
+                        id,
+                        dados,
+                        email
+                );
+
+        return AtletaMapper.toDTO(atualizado);
 
     }
 
@@ -114,22 +137,5 @@ public class AtletaController {
         );
 
     }
-    @PatchMapping("/{id}")
-public AtletaModel atualizarParcial(
-        @PathVariable Long id,
-        @RequestBody AtletaModel atleta,
-        HttpServletRequest request
-) {
-
-    String email =
-            (String) request.getAttribute("email");
-
-    return atletaService.atualizarParcial(
-            id,
-            atleta,
-            email
-    );
-
-}
 
 }
