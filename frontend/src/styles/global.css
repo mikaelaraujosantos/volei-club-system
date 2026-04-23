@@ -1,0 +1,360 @@
+/* ========================= */
+/* RESET GLOBAL */
+/* ========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+/* ========================= */
+/* CORES DO PROJETO */
+/* ========================= */
+
+:root {
+
+  --Azul-svc: #15334f;
+  --Vermelho-svc: #cd122a;
+  --cinza-bg: #f1f5f9;
+
+}
+
+
+/* ========================= */
+/* BODY */
+/* ========================= */
+
+body {
+
+  font-family: Arial, Helvetica, sans-serif;
+
+  font-size: 18px;
+
+  background-color: var(--cinza-bg);
+
+}
+
+h2 {
+
+  color: var(--Azul-svc);
+
+  margin-bottom: 20px;
+
+}
+
+
+/* ========================= */
+/* ÁREA PRINCIPAL */
+/* ========================= */
+
+main {
+
+  min-height: 100vh;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 20px;
+
+}
+
+
+/* ========================= */
+/* ESCUDO NO TOPO */
+/* ========================= */
+
+.topo {
+
+  margin-bottom: 20px;
+
+  top: 20px;
+
+  width: 100%;
+
+  display: flex;
+
+  justify-content: center;
+
+}
+
+
+/* LOGO */
+
+.logo {
+
+  width: 75px;
+
+  height: 75px;
+
+
+}
+
+
+/* ========================= */
+/* ÁREA LOGIN */
+/* ========================= */
+
+.area-login {
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  width: 100%;
+
+}
+
+
+/* ========================= */
+/* BOTÃO LOGIN */
+/* ========================= */
+
+.botao-login {
+
+  background-color: var(--Azul-svc);
+
+  color: white;
+
+  padding: 18px 40px;
+
+  border-radius: 12px;
+
+  border: none;
+
+  font-size: 20px;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+
+}
+
+.botao-login:hover {
+
+  background-color: #1a4369;
+
+  transform: scale(1.05);
+
+}
+
+
+/* ========================= */
+/* ÁREA EXPANSÍVEL */
+/* ========================= */
+
+.area-expandida {
+
+  margin-top: 20px;
+
+  width: 100%;
+
+  max-width: 360px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 18px;
+
+  opacity: 0;
+
+  max-height: 0;
+
+  overflow: hidden;
+
+  transition: 0.4s ease;
+
+}
+
+.area-expandida.ativa {
+
+  opacity: 1;
+
+  max-height: 1000px;
+
+}
+
+
+/* ========================= */
+/* INPUT (AJUSTADO MAIS GROSSO) */
+/* ========================= */
+
+.input {
+
+  padding: 16px;
+
+  border-radius: 10px;
+
+  border: 1.5px solid #ccc;
+
+  font-size: 17px;
+
+  width: 100%;
+
+}
+
+
+/* FOCUS */
+
+.input:focus {
+
+  outline: none;
+
+  border-color: var(--Vermelho-svc);
+
+  box-shadow: 0 0 6px rgba(205, 18, 42, 0.3);
+
+}
+
+
+/* ========================= */
+/* BOTÕES PADRÃO */
+/* ========================= */
+
+.button {
+
+  background-color: var(--Azul-svc);
+
+  color: white;
+
+  padding: 16px;
+
+  border-radius: 10px;
+
+  border: none;
+
+  cursor: pointer;
+
+  font-weight: bold;
+
+  font-size: 17px;
+
+  transition: 0.3s;
+
+}
+
+.button:hover {
+
+  background-color: #1a4369;
+
+}
+
+
+/* ========================= */
+/* RODAPÉ */
+/* ========================= */
+
+.rodape {
+
+  margin-top: 40px;
+
+  bottom: 20px;
+
+  width: 100%;
+
+  text-align: center;
+
+  font-size: 14px;
+
+  color: #555;
+
+}
+
+
+/* ========================= */
+/* RESPONSIVO (CELULAR) */
+/* ========================= */
+
+@media (max-width: 600px) {
+
+  .logo {
+
+    width: 65px;
+
+    height: 65px;
+
+  }
+
+  .botao-login {
+
+    width: 100%;
+
+    font-size: 18px;
+
+  }
+
+}
+
+
+.form{
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 15px;
+}
+
+/* BOTÃO SECUNDÁRIO (ex: Voltar) */
+
+.button-secundario {
+
+  background-color: var(--Vermelho-svc);
+
+  color: white;
+
+  padding: 16px;
+
+  border-radius: 10px;
+
+  border: none;
+
+  cursor: pointer;
+
+  font-weight: bold;
+
+  font-size: 17px;
+
+  transition: 0.3s;
+
+}
+
+.button-secundario:hover {
+
+  background-color: #bbb;
+
+}
+
+/* ========================= */
+/* MENSAGENS DE ERRO */
+/* ========================= */
+
+.erro {
+
+  color: var(--Vermelho-svc);
+
+  font-size: 14px;
+
+  text-align: left;
+
+  margin-top: -10px;
+
+}
+
+/* INPUT COM ERRO */
+
+.input-erro {
+
+  border-color: var(--Vermelho-svc);
+
+}
