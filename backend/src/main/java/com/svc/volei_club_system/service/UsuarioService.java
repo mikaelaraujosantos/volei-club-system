@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import com.svc.volei_club_system.enums.Role;
 import com.svc.volei_club_system.model.UsuarioModel;
 import com.svc.volei_club_system.repository.UsuarioRepository;
-
+import com.svc.volei_club_system.exception.ResourceNotFoundException;
 
 @Service
 public class UsuarioService {
@@ -67,7 +67,7 @@ public UsuarioModel cadastrarUsuario(UsuarioModel usuario) {
     return usuarioRepository
             .findByEmail(email)
             .orElseThrow(() ->
-                new RuntimeException("Usuário não encontrado"));
+                new ResourceNotFoundException("Usuário não encontrado"));
 
 }
 

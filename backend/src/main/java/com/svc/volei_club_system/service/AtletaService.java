@@ -3,12 +3,18 @@ package com.svc.volei_club_system.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com.svc.volei_club_system.model.AtletaModel;
 import com.svc.volei_club_system.model.UsuarioModel;
 import com.svc.volei_club_system.repository.AtletaRepository;
 import com.svc.volei_club_system.repository.UsuarioRepository;
+import com.svc.volei_club_system.exception.ResourceNotFoundException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+
+
 
 @Service
 public class AtletaService {
@@ -28,8 +34,8 @@ public class AtletaService {
         return usuarioRepository
                 .findByEmail(emailUsuario)
                 .orElseThrow(() ->
-                        new RuntimeException(
-                                "Usuário não encontrado"
+                        new ResourceNotFoundException(
+                                "Atleta não encontrado"
                         )
                 );
 
@@ -57,15 +63,15 @@ public class AtletaService {
     // LISTAR
     // =========================
 
-    public List<AtletaModel> listarAtletas(
-            String emailUsuario
+    public Page<AtletaModel> listarAtletas(
+            String emailUsuario, Pageable pageable
     ) {
 
         UsuarioModel usuario =
                 buscarUsuario(emailUsuario);
 
         return atletaRepository
-                .findByUsuario(usuario);
+                .findByUsuario(usuario, pageable);
 
     }
 
@@ -84,7 +90,7 @@ public class AtletaService {
         return atletaRepository
                 .findByIdAndUsuario(id, usuario)
                 .orElseThrow(() ->
-                        new RuntimeException(
+                        new ResourceNotFoundException(
                                 "Atleta não encontrado"
                         )
                 );
@@ -108,7 +114,7 @@ public class AtletaService {
                 atletaRepository
                 .findByIdAndUsuario(id, usuario)
                 .orElseThrow(() ->
-                        new RuntimeException(
+                        new ResourceNotFoundException(
                                 "Atleta não encontrado"
                         )
                 );
@@ -141,7 +147,7 @@ public class AtletaService {
                 atletaRepository
                 .findByIdAndUsuario(id, usuario)
                 .orElseThrow(() ->
-                        new RuntimeException(
+                        new ResourceNotFoundException(
                                 "Atleta não encontrado"
                         )
                 );
@@ -162,7 +168,7 @@ public class AtletaService {
             atletaRepository
             .findByIdAndUsuario(id, usuario)
             .orElseThrow(() ->
-                    new RuntimeException(
+                    new ResourceNotFoundException(
                             "Atleta não encontrado"
                     )
             );

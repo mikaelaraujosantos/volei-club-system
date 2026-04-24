@@ -1,6 +1,8 @@
 package com.svc.volei_club_system.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import com.svc.volei_club_system.dto.*;
@@ -52,20 +54,19 @@ public class AtletaController {
     // =========================
 
     @GetMapping
-    public List<AtletaDTO> listar(
-            HttpServletRequest request
-    ) {
+public Page<AtletaDTO> listar(
+        Pageable pageable,
+        HttpServletRequest request
+) {
 
-        String email =
-                (String) request.getAttribute("email");
+    String email =
+            (String) request.getAttribute("email");
 
-        return atletaService
-                .listarAtletas(email)
-                .stream()
-                .map(AtletaMapper::toDTO)
-                .collect(Collectors.toList());
+    return atletaService
+            .listarAtletas(email, pageable)
+            .map(AtletaMapper::toDTO);
 
-    }
+}
 
     // =========================
     // BUSCAR POR ID
