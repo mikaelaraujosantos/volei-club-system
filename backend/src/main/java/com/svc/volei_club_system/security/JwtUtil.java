@@ -2,12 +2,15 @@ package com.svc.volei_club_system.security;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.Claims;
 
 @Component
 public class JwtUtil {
@@ -18,27 +21,40 @@ public class JwtUtil {
     private final Key key =
         Keys.hmacShaKeyFor(SECRET.getBytes());
 
-    public String gerarToken(String email) {
-
+    // Método para gerar token com email e role
+    public String gerarToken(String email, String role) {
+        
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", role);
+        claims.put("email", email);
+        
         return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(
-                        new Date(System.currentTimeMillis() + 1000 * 60 * 60)
+                        new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10) // 10 horas
                 )
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String validarToken(String token) {
-
-    return Jwts.parserBuilder()
-            .setSigningKey(key)
-            .build()
-            .parseClaimsJws(token)
-            .getBody()
-            .getSubject();
-
-}
-
+    // Método para validar token e retornar Claims
+    public Claims validarToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+    
+    // Método auxiliar para extrair apenas o email
+    public String extrairEmail(String token) {
+        return validarToken(token).getSubject();
+    }
+    
+    // Método auxiliar para extrair a role
+    public String extrairRole(String token) {
+        return validarToken(token).get("role", String.class);
+    }
 }

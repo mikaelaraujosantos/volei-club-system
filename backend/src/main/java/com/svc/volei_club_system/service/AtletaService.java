@@ -11,10 +11,9 @@ import com.svc.volei_club_system.model.UsuarioModel;
 import com.svc.volei_club_system.repository.AtletaRepository;
 import com.svc.volei_club_system.repository.UsuarioRepository;
 import com.svc.volei_club_system.exception.ResourceNotFoundException;
+import com.svc.volei_club_system.enums.Role;
+
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest;
-
-
 
 @Service
 public class AtletaService {
@@ -35,7 +34,7 @@ public class AtletaService {
                 .findByEmail(emailUsuario)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "Atleta não encontrado"
+                                "Usuário não encontrado"
                         )
                 );
 
@@ -60,15 +59,26 @@ public class AtletaService {
     }
 
     // =========================
-    // LISTAR
+    // LISTAR (COM ADMIN)
     // =========================
 
     public Page<AtletaModel> listarAtletas(
-            String emailUsuario, Pageable pageable
+            String emailUsuario,
+            Pageable pageable
     ) {
 
         UsuarioModel usuario =
                 buscarUsuario(emailUsuario);
+
+        // ADMIN vê todos
+
+        if (usuario.getRole() == Role.ADMIN) {
+
+            return atletaRepository.findAll(pageable);
+
+        }
+
+        // USER vê só os seus
 
         return atletaRepository
                 .findByUsuario(usuario, pageable);
@@ -86,6 +96,22 @@ public class AtletaService {
 
         UsuarioModel usuario =
                 buscarUsuario(emailUsuario);
+
+        // ADMIN pode acessar qualquer atleta
+
+        if (usuario.getRole() == Role.ADMIN) {
+
+            return atletaRepository
+                    .findById(id)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    "Atleta não encontrado"
+                            )
+                    );
+
+        }
+
+        // USER só os próprios
 
         return atletaRepository
                 .findByIdAndUsuario(id, usuario)
@@ -110,14 +136,29 @@ public class AtletaService {
         UsuarioModel usuario =
                 buscarUsuario(emailUsuario);
 
-        AtletaModel atleta =
-                atletaRepository
-                .findByIdAndUsuario(id, usuario)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Atleta não encontrado"
-                        )
-                );
+        AtletaModel atleta;
+
+        if (usuario.getRole() == Role.ADMIN) {
+
+            atleta = atletaRepository
+                    .findById(id)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    "Atleta não encontrado"
+                            )
+                    );
+
+        } else {
+
+            atleta = atletaRepository
+                    .findByIdAndUsuario(id, usuario)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    "Atleta não encontrado"
+                            )
+                    );
+
+        }
 
         atleta.setNome(dados.getNome());
         atleta.setIdade(dados.getIdade());
@@ -143,69 +184,101 @@ public class AtletaService {
         UsuarioModel usuario =
                 buscarUsuario(emailUsuario);
 
-        AtletaModel atleta =
-                atletaRepository
-                .findByIdAndUsuario(id, usuario)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Atleta não encontrado"
-                        )
-                );
+        AtletaModel atleta;
+
+        if (usuario.getRole() == Role.ADMIN) {
+
+            atleta = atletaRepository
+                    .findById(id)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    "Atleta não encontrado"
+                            )
+                    );
+
+        } else {
+
+            atleta = atletaRepository
+                    .findByIdAndUsuario(id, usuario)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    "Atleta não encontrado"
+                            )
+                    );
+
+        }
 
         atletaRepository.delete(atleta);
 
     }
+
+    // =========================
+    // ATUALIZAR PARCIAL
+    // =========================
+
     public AtletaModel atualizarParcial(
-        Long id,
-        AtletaModel dados,
-        String emailUsuario
-) {
+            Long id,
+            AtletaModel dados,
+            String emailUsuario
+    ) {
 
-    UsuarioModel usuario =
-            buscarUsuario(emailUsuario);
+        UsuarioModel usuario =
+                buscarUsuario(emailUsuario);
 
-    AtletaModel atleta =
-            atletaRepository
-            .findByIdAndUsuario(id, usuario)
-            .orElseThrow(() ->
-                    new ResourceNotFoundException(
-                            "Atleta não encontrado"
-                    )
-            );
+        AtletaModel atleta;
 
-    // Atualiza apenas se vier valor
+        if (usuario.getRole() == Role.ADMIN) {
 
-    if (dados.getNome() != null) {
-        atleta.setNome(dados.getNome());
+            atleta = atletaRepository
+                    .findById(id)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    "Atleta não encontrado"
+                            )
+                    );
+
+        } else {
+
+            atleta = atletaRepository
+                    .findByIdAndUsuario(id, usuario)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    "Atleta não encontrado"
+                            )
+                    );
+
+        }
+
+        if (dados.getNome() != null) {
+            atleta.setNome(dados.getNome());
+        }
+
+        if (dados.getTelefone() != null) {
+            atleta.setTelefone(dados.getTelefone());
+        }
+
+        if (dados.getPosicao() != null) {
+            atleta.setPosicao(dados.getPosicao());
+        }
+
+        if (dados.getResponsavel() != null) {
+            atleta.setResponsavel(dados.getResponsavel());
+        }
+
+        if (dados.getAltura() != null) {
+            atleta.setAltura(dados.getAltura());
+        }
+
+        if (dados.getAtivo() != null) {
+            atleta.setAtivo(dados.getAtivo());
+        }
+
+        if (dados.getIdade() != null) {
+            atleta.setIdade(dados.getIdade());
+        }
+
+        return atletaRepository.save(atleta);
+
     }
-
-    if (dados.getTelefone() != null) {
-        atleta.setTelefone(dados.getTelefone());
-    }
-
-    if (dados.getPosicao() != null) {
-        atleta.setPosicao(dados.getPosicao());
-    }
-
-    if (dados.getResponsavel() != null) {
-        atleta.setResponsavel(dados.getResponsavel());
-    }
-
-    if (dados.getAltura() != null) {
-        atleta.setAltura(dados.getAltura());
-    }
-
-    if (dados.getAtivo() != null) {
-        atleta.setAtivo(dados.getAtivo());
-    }
-
-    // idade é int (não aceita null)
-    if (dados.getIdade() != null) {
-        atleta.setIdade(dados.getIdade());
-    }
-
-    return atletaRepository.save(atleta);
-
-}
 
 }

@@ -17,6 +17,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import io.jsonwebtoken.Claims;
+
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -30,52 +32,50 @@ public class JwtFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String header =
-                request.getHeader("Authorization");
+        String header = request.getHeader("Authorization");
 
         System.out.println("Header: " + header);
 
         if (header != null && header.startsWith("Bearer ")) {
 
-            String token =
-                    header.substring(7);
+            String token = header.substring(7);
 
             System.out.println("Token recebido: " + token);
 
             try {
 
-                String email =
-                        jwtUtil.validarToken(token);
-
+                // Valida token e obtém os claims
+                Claims claims = jwtUtil.validarToken(token);
+                
+                String email = claims.getSubject();
+                String role = claims.get("role", String.class);
+                
                 System.out.println("Email do token: " + email);
+                System.out.println("Role do token: " + role);
 
-                // salva no request
+                // Salva no request para controllers acessarem
                 request.setAttribute("email", email);
+                request.setAttribute("role", role);
 
-                // CRIA AUTHENTICATION (ESSENCIAL)
+                // Cria autenticação com a role correta
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
                                 email,
                                 null,
                                 Collections.singletonList(
-                                        new SimpleGrantedAuthority("USER")
+                                        new SimpleGrantedAuthority("ROLE_" + role)
                                 )
                         );
 
-                SecurityContextHolder
-                        .getContext()
-                        .setAuthentication(auth);
+                SecurityContextHolder.getContext().setAuthentication(auth);
 
-                System.out.println("Authentication criada!");
+                System.out.println("Authentication criada com role: ROLE_" + role);
 
             } catch (Exception e) {
 
-                System.out.println("Erro ao validar token!");
+                System.out.println("Erro ao validar token: " + e.getMessage());
 
-                response.setStatus(
-                        HttpServletResponse.SC_UNAUTHORIZED
-                );
-
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
 

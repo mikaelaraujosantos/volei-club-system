@@ -19,25 +19,21 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
-   @PostMapping("/login")
-public LoginResponseDTO login(
-        @RequestBody LoginDTO loginDTO
-) {
+    @PostMapping("/login")
+    public LoginResponseDTO login(@RequestBody LoginDTO loginDTO) {
 
-    UsuarioModel usuario =
-        usuarioService.buscarPorEmail(loginDTO.getEmail());
+        UsuarioModel usuario = usuarioService.buscarPorEmail(loginDTO.getEmail());
 
-    if (!usuario.getSenha().equals(loginDTO.getSenha())) {
+        if (!usuario.getSenha().equals(loginDTO.getSenha())) {
+            throw new RuntimeException("Senha inválida");
+        }
 
-        throw new RuntimeException("Senha inválida");
+        // Converte Enum para String
+        String roleString = usuario.getRole().name();
+        
+        // Gera token com email e role
+        String token = jwtUtil.gerarToken(usuario.getEmail(), roleString);
 
+        return new LoginResponseDTO(token, roleString);
     }
-
-    String token =
-        jwtUtil.gerarToken(usuario.getEmail());
-
-    return new LoginResponseDTO(token);
-
-}
-
 }
