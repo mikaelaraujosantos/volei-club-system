@@ -5,7 +5,7 @@ import Login from '../pages/Login'
 import Cadastro from '../pages/Cadastro'
 import Home from '../pages/Home'
 import Admin from '../pages/Admin'
-
+import EditarAtleta from "../pages/EditarAtleta";
 import ProtectedRoute from './ProtectedRoute'
 
 function AppRoutes() {
@@ -40,6 +40,11 @@ function AppRoutes() {
               <Admin />
             </ProtectedRoute>
           }
+        />
+
+        <Route
+          path="/editar/:id"
+          element={<EditarAtleta />}
         />
 
       </Routes>

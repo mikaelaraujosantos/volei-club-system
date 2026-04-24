@@ -23,54 +23,67 @@ function Inicio() {
 
   async function entrar() {
 
-    if (email === "" || senha === "") {
+  if (email === "" || senha === "") {
 
-      alert("Preencha email e senha")
+    alert("Preencha email e senha")
+    return
+
+  }
+
+  try {
+
+    const response = await fetch(
+      "http://localhost:8080/auth/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: email,
+          senha: senha
+        })
+      }
+    )
+
+    if (!response.ok) {
+
+      alert("Email ou senha inválidos")
       return
 
     }
 
-    try {
+    const data = await response.json()
 
-      const response = await fetch(
-        "http://localhost:8080/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            email: email,
-            senha: senha
-          })
-        }
-      )
+    // salva token
+    localStorage.setItem("token", data.token)
 
-      if (!response.ok) {
+    // salva role
+    localStorage.setItem("role", data.role)
 
-        alert("Email ou senha inválidos")
-        return
+    alert("Login realizado com sucesso")
 
-      }
+    // 🔥 REDIRECIONAMENTO POR ROLE
 
-      const data = await response.json()
+    if (data.role === "ADMIN") {
 
-      // salva token
-      localStorage.setItem("token", data.token)
+      navigate("/admin")
 
-      alert("Login realizado com sucesso")
+    } else {
 
       navigate("/home")
 
-    } catch (error) {
-
-      console.error(error)
-
-      alert("Erro ao conectar com o servidor")
-
     }
 
+  } catch (error) {
+
+    console.error(error)
+
+    alert("Erro ao conectar com o servidor")
+
   }
+
+}
 
   function irCadastro() {
 
