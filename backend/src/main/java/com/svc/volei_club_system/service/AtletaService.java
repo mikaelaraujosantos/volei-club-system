@@ -173,7 +173,7 @@ public class AtletaService {
     }
 
     // =========================
-    // DELETAR
+    // DELETAR (DESATIVAR)
     // =========================
 
     public void deletarAtleta(
@@ -208,7 +208,9 @@ public class AtletaService {
 
         }
 
-        atletaRepository.delete(atleta);
+        // Em vez de deletar, apenas desativa o atleta
+        atleta.setAtivo(false);
+        atletaRepository.save(atleta);
 
     }
 
@@ -281,4 +283,12 @@ public class AtletaService {
 
     }
 
+    // =========================
+    // BUSCAR ATLETA POR USUÁRIO ID
+    // =========================
+
+    public AtletaModel buscarPorUsuarioId(Long usuarioId) {
+        return atletaRepository.findByUsuarioId(usuarioId)
+                .orElse(null);
+    }
 }

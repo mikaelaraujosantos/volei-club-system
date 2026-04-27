@@ -37,6 +37,10 @@ public UsuarioModel cadastrarUsuario(UsuarioModel usuario) {
     public Iterable<UsuarioModel> listarUsuarios() {
         return usuarioRepository.findAll();
     }
+    
+    public UsuarioModel salvar(UsuarioModel usuario) {
+        return usuarioRepository.save(usuario);
+    }
 
 
     //buscar por email

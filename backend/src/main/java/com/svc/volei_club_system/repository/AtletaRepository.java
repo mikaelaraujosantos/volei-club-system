@@ -23,5 +23,8 @@ public interface AtletaRepository
         UsuarioModel usuario,
         Pageable pageable
 );
+List<AtletaModel> findByAtivoTrue();
+
+ Optional<AtletaModel> findByUsuarioId(Long usuarioId);
 
 }
