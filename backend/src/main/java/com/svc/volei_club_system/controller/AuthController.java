@@ -1,6 +1,7 @@
 package com.svc.volei_club_system.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import com.svc.volei_club_system.dto.LoginDTO;
@@ -13,6 +14,7 @@ import com.svc.volei_club_system.service.AtletaService;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = "*")
 public class AuthController {
 
     @Autowired
@@ -20,34 +22,62 @@ public class AuthController {
 
     @Autowired
     private JwtUtil jwtUtil;
-    
+
     @Autowired
-    private AtletaService atletaService;  // Adicione esta linha
+    private AtletaService atletaService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
     public LoginResponseDTO login(@RequestBody LoginDTO loginDTO) {
 
-        UsuarioModel usuario = usuarioService.buscarPorEmail(loginDTO.getEmail());
+        // Buscar usuário
+        UsuarioModel usuario =
+                usuarioService.buscarPorEmail(loginDTO.getEmail());
 
-        if (usuario == null || !usuario.getSenha().equals(loginDTO.getSenha())) {
-            throw new RuntimeException("Email ou senha inválidos");
+        // Verificar senha corretamente
+        if (!passwordEncoder.matches(
+                loginDTO.getSenha(),
+                usuario.getSenha()
+        )) {
+
+            throw new RuntimeException(
+                    "Email ou senha inválidos"
+            );
+
         }
 
-        // Converte Enum para String
-        String roleString = usuario.getRole().name();
-        
-        // Gera token com email e role
-        String token = jwtUtil.gerarToken(usuario.getEmail(), roleString);
-        
-        // Buscar atletaId se for ATLETA
+        // Role como String
+        String roleString =
+                usuario.getRole().name();
+
+        // Gerar token
+        String token =
+                jwtUtil.gerarToken(
+                        usuario.getEmail(),
+                        roleString
+                );
+
+        // Buscar atletaId se for atleta
         Long atletaId = null;
-        if (roleString.equals("ATLETA")) {
-            AtletaModel atleta = atletaService.buscarPorUsuarioId(usuario.getId());
-            if (atleta != null) {
-                atletaId = atleta.getId();
-            }
-        }
 
-        return new LoginResponseDTO(token, roleString, atletaId);
+        if (roleString.equals("ATLETA")) {
+    AtletaModel atleta = atletaService.buscarPorUsuarioId(usuario.getId());
+
+    if (atleta != null) {
+        atletaId = atleta.getId();
     }
+}
+
+        
+
+        return new LoginResponseDTO(
+                token,
+                roleString,
+                atletaId
+        );
+
+    }
+
 }

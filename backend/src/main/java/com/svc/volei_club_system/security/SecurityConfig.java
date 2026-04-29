@@ -9,6 +9,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.List;
@@ -17,12 +20,32 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    // =========================
+    // PASSWORD ENCODER (OBRIGATÓRIO)
+    // =========================
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+
+        return new BCryptPasswordEncoder();
+
+    }
+
+    // =========================
+    // SECURITY CONFIG
+    // =========================
+
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http
     ) throws Exception {
 
         http
+
+            // =========================
+            // CORS
+            // =========================
+
             .cors(cors -> cors.configurationSource(request -> {
 
                 CorsConfiguration config =
@@ -51,7 +74,15 @@ public class SecurityConfig {
 
             }))
 
+            // =========================
+            // CSRF
+            // =========================
+
             .csrf(csrf -> csrf.disable())
+
+            // =========================
+            // SESSION
+            // =========================
 
             .sessionManagement(session ->
                     session.sessionCreationPolicy(
@@ -59,14 +90,23 @@ public class SecurityConfig {
                     )
             )
 
+            // =========================
+            // ROTAS LIBERADAS
+            // =========================
+
             .authorizeHttpRequests(auth -> auth
 
-                    // libera login
+                    // login
                     .requestMatchers(
                             "/auth/**"
                     ).permitAll()
 
-                    // libera preflight
+                    // cadastro público
+                    .requestMatchers(
+                            "/atletas/cadastro-completo"
+                    ).permitAll()
+
+                    // OPTIONS (preflight)
                     .requestMatchers(
                             "/**"
                     ).permitAll()

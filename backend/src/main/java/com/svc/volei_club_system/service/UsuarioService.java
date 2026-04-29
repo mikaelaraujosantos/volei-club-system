@@ -1,6 +1,7 @@
 package com.svc.volei_club_system.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.svc.volei_club_system.enums.Role;
@@ -10,14 +11,18 @@ import com.svc.volei_club_system.exception.ResourceNotFoundException;
 
 @Service
 public class UsuarioService {
-    
+
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    //cadastrar usuario
-public UsuarioModel cadastrarUsuario(UsuarioModel usuario) {
+    // =========================
+    // CADASTRAR USUÁRIO
+    // =========================
+
+    public UsuarioModel cadastrarUsuario(UsuarioModel usuario) {
 
     // verificar email duplicado
     if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
@@ -26,53 +31,102 @@ public UsuarioModel cadastrarUsuario(UsuarioModel usuario) {
 
     }
 
-    usuario.setAtivo(false);
+    // 🔥 ativar usuário automaticamente
+    usuario.setAtivo(true);
+
+    // definir role
     usuario.setRole(Role.ATLETA);
 
     return usuarioRepository.save(usuario);
 
 }
+    // =========================
+    // SALVAR USUÁRIO
+    // =========================
 
-    //listar todos 
-    public Iterable<UsuarioModel> listarUsuarios() {
-        return usuarioRepository.findAll();
-    }
-    
     public UsuarioModel salvar(UsuarioModel usuario) {
+
+        usuario.setSenha(
+                passwordEncoder.encode(usuario.getSenha())
+        );
+
         return usuarioRepository.save(usuario);
+
     }
 
+    // =========================
+    // LISTAR
+    // =========================
 
-    //buscar por email
+    public Iterable<UsuarioModel> listarUsuarios() {
+
+        return usuarioRepository.findAll();
+
+    }
+
+    // =========================
+    // BUSCAR POR EMAIL
+    // =========================
+
     public UsuarioModel buscarPorEmail(String email) {
-        return usuarioRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        return usuarioRepository
+                .findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("Usuário não encontrado"));
+
     }
 
-    //aprovar usuario
+    // =========================
+    // APROVAR USUÁRIO
+    // =========================
+
     public UsuarioModel aprovarUsuario(Long id) {
-        UsuarioModel usuario = usuarioRepository.findById(id).orElseThrow();
+
+        UsuarioModel usuario =
+                usuarioRepository
+                        .findById(id)
+                        .orElseThrow();
+
         usuario.setAtivo(true);
+
         return usuarioRepository.save(usuario);
+
     }
 
-    //login
+    // =========================
+    // LOGIN
+    // =========================
+
     public UsuarioModel login(String email, String senha) {
-        UsuarioModel usuario = usuarioRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        
-        if (!usuario.getSenha().equals(senha)) {
+
+        UsuarioModel usuario =
+                usuarioRepository
+                        .findByEmail(email)
+                        .orElseThrow(() ->
+                                new RuntimeException("Usuário não encontrado"));
+
+        if (!passwordEncoder.matches(senha, usuario.getSenha())) {
+
             throw new RuntimeException("Senha incorreta");
+
         }
-        
+
         return usuario;
+
     }
 
-   public UsuarioModel buscarUsuarioLogado(String email) {
+    // =========================
+    // USUÁRIO LOGADO
+    // =========================
 
-    return usuarioRepository
-            .findByEmail(email)
-            .orElseThrow(() ->
-                new ResourceNotFoundException("Usuário não encontrado"));
+    public UsuarioModel buscarUsuarioLogado(String email) {
 
-}
+        return usuarioRepository
+                .findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Usuário não encontrado"));
+
+    }
 
 }
