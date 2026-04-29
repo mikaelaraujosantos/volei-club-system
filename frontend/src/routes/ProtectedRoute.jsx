@@ -7,7 +7,7 @@ function ProtectedRoute({ children }) {
   // se NÃO tiver token → volta login
   if (!token) {
 
-    return <Navigate to="/login" />
+    return <Navigate to="/" />
 
   }
 

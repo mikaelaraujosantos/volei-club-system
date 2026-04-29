@@ -16,79 +16,83 @@ function Inicio() {
   const [senha, setSenha] = useState("")
 
   function toggleLogin() {
-
     setAberto(!aberto)
-
   }
 
   async function entrar() {
 
-  if (email === "" || senha === "") {
-
-    alert("Preencha email e senha")
-    return
-
-  }
-
-  try {
-
-    const response = await fetch(
-      "http://localhost:8080/auth/login",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          email: email,
-          senha: senha
-        })
-      }
-    )
-
-    if (!response.ok) {
-
-      alert("Email ou senha inválidos")
+    if (email === "" || senha === "") {
+      alert("Preencha email e senha")
       return
+    }
+
+    try {
+
+      const response = await fetch(
+        "http://localhost:8080/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email,
+            senha
+          })
+        }
+      )
+
+      if (!response.ok) {
+        alert("Email ou senha inválidos")
+        return
+      }
+
+      const data = await response.json()
+
+      localStorage.setItem("token", data.token)
+      localStorage.setItem("role", data.role)
+
+      if (data.atletaId) {
+        localStorage.setItem("atletaId", data.atletaId)
+      }
+
+      alert("Login realizado com sucesso")
+
+      // 🔥 REDIRECIONAMENTO INTELIGENTE
+
+      if (data.role === "ADMIN") {
+
+        navigate("/admin")
+
+      } 
+      else {
+
+        if (!data.atletaId) {
+
+          navigate("/completar-cadastro")
+
+        } 
+        else {
+
+          navigate("/home")
+
+        }
+
+      }
 
     }
 
-    const data = await response.json()
+    catch (error) {
 
-    // salva token
-    localStorage.setItem("token", data.token)
-
-    // salva role
-    localStorage.setItem("role", data.role)
-
-    alert("Login realizado com sucesso")
-
-    // 🔥 REDIRECIONAMENTO POR ROLE
-
-    if (data.role === "ADMIN") {
-
-      navigate("/admin")
-
-    } else {
-
-      navigate("/home")
+      console.error(error)
+      alert("Erro ao conectar com o servidor")
 
     }
-
-  } catch (error) {
-
-    console.error(error)
-
-    alert("Erro ao conectar com o servidor")
 
   }
-
-}
 
   function irCadastro() {
-
     navigate("/cadastro")
-
   }
 
   return (

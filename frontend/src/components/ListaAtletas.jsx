@@ -4,61 +4,68 @@ import { useNavigate } from "react-router-dom";
 export default function ListaAtletas() {
 
   const [atletas, setAtletas] = useState([]);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState(null);
+
+  const [pagina, setPagina] = useState(0);
+  const [totalPaginas, setTotalPaginas] = useState(0);
+
+  const [busca, setBusca] = useState("");
 
   const navigate = useNavigate();
 
-  // =========================
-  // CARREGAR ATLETAS
-  // =========================
-
   useEffect(() => {
+    buscarAtletas();
+  }, [pagina]);
 
-    async function carregar() {
+  async function buscarAtletas() {
 
-      try {
+    setCarregando(true);
+    setErro(null);
 
-        const token = localStorage.getItem("token");
+    try {
 
-        const resposta = await fetch(
-          "http://localhost:8080/atletas",
-          {
-            method: "GET",
-            headers: {
-              "Authorization": `Bearer ${token}`
-            }
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        `http://localhost:8080/atletas?page=${pagina}&size=10`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
           }
-        );
-
-        if (!resposta.ok) {
-
-          console.error("Erro ao buscar atletas");
-          return;
-
         }
+      );
 
-        const dados = await resposta.json();
-
-        // backend retorna Page
-        setAtletas(dados.content);
-
-      } catch (erro) {
-
-        console.error(
-          "Erro ao buscar atletas:",
-          erro
+      if (!response.ok) {
+        throw new Error(
+          `HTTP ${response.status}`
         );
-
       }
+
+      const data = await response.json();
+
+      setAtletas(data.content);
+      setTotalPaginas(data.totalPages);
+
+    }
+    catch (erro) {
+
+      console.error(erro);
+
+      setErro(erro.message);
+
+      setAtletas([]);
+
+    }
+    finally {
+
+      setCarregando(false);
 
     }
 
-    carregar();
-
-  }, []);
-
-  // =========================
-  // EDITAR ATLETA
-  // =========================
+  }
 
   function editarAtleta(id) {
 
@@ -66,151 +73,249 @@ export default function ListaAtletas() {
 
   }
 
-  // =========================
-  // EXCLUIR ATLETA
-  // =========================
-
   async function excluirAtleta(id) {
 
-    const confirmar =
-      window.confirm(
-        "Deseja excluir este atleta?"
-      );
-
-    if (!confirmar) return;
-
-    try {
-
-      const token =
-        localStorage.getItem("token");
-
-      const resposta = await fetch(
-        `http://localhost:8080/atletas/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        }
-      );
-
-      if (resposta.ok) {
-
-        alert("Atleta excluído");
-
-        recarregarLista();
-
-      } else {
-
-        alert("Erro ao excluir atleta");
-
-      }
-
-    } catch (erro) {
-
-      console.error(
-        "Erro ao excluir atleta:",
-        erro
-      );
-
+    if (!window.confirm("Deseja inativar este atleta?")) {
+      return;
     }
-
-  }
-
-  // =========================
-  // RECARREGAR LISTA
-  // =========================
-
-  async function recarregarLista() {
 
     try {
 
       const token = localStorage.getItem("token");
 
-      const resposta = await fetch(
-        "http://localhost:8080/atletas",
+      const response = await fetch(
+        `http://localhost:8080/atletas/${id}`,
         {
-          method: "GET",
+          method: "DELETE",
           headers: {
-            "Authorization": `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
           }
         }
       );
 
-      const dados = await resposta.json();
+      if (response.ok) {
 
-      setAtletas(dados.content);
+        buscarAtletas();
 
-    } catch (erro) {
+      }
+      else {
 
-      console.error(
-        "Erro ao recarregar:",
-        erro
-      );
+        alert("Erro ao inativar atleta");
+
+      }
+
+    }
+    catch (error) {
+
+      console.error(error);
+
+      alert("Erro ao inativar atleta");
 
     }
 
   }
 
-  // =========================
-  // TELA
-  // =========================
+  /* FILTRO BUSCA */
+
+  const atletasFiltrados = atletas.filter(atleta =>
+    atleta.nome
+      .toLowerCase()
+      .includes(busca.toLowerCase())
+  );
+
+  if (carregando) {
+
+    return (
+      <div className="loading">
+        Carregando atletas...
+      </div>
+    );
+
+  }
+
+  if (erro) {
+
+    return (
+      <div className="erro-box">
+
+        <p>
+          Erro ao carregar atletas: {erro}
+        </p>
+
+        <button
+          className="btn-primary"
+          onClick={buscarAtletas}
+        >
+          Tentar novamente
+        </button>
+
+      </div>
+    );
+
+  }
 
   return (
 
     <div>
 
-      <h2>Lista de Atletas</h2>
+      {/* BUSCA */}
 
-      {atletas.length === 0 ? (
+      <div className="busca-container">
 
-        <p>Nenhum atleta cadastrado</p>
+        <input
+          type="text"
+          placeholder="🔍 Buscar atleta..."
+          value={busca}
+          onChange={(e) =>
+            setBusca(e.target.value)
+          }
+          className="input-busca"
+        />
+
+      </div>
+
+      {/* TÍTULO */}
+
+      <h2>
+
+        Atletas cadastrados
+        ({atletasFiltrados.length})
+
+      </h2>
+
+      {/* TABELA */}
+
+      {atletasFiltrados.length === 0 ? (
+
+        <p>
+          Nenhum atleta encontrado
+        </p>
 
       ) : (
 
-        <ul>
+        <div className="table-container">
 
-          {atletas.map((atleta) => (
+          <table className="table">
 
-            <li key={atleta.id}>
+            <thead>
 
-              <strong>
-                {atleta.nome}
-              </strong>
+              <tr>
 
-              {" - "}
-              {atleta.posicao}
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Idade</th>
+                <th>Telefone</th>
+                <th>Posição</th>
+                <th>Status</th>
+                <th>Ações</th>
 
-              {" - "}
-              {atleta.idade} anos
+              </tr>
 
-              {" "}
+            </thead>
 
-              <button
-                onClick={() =>
-                  editarAtleta(atleta.id)
-                }
-              >
-                Editar
-              </button>
+            <tbody>
 
-              {" "}
+              {atletasFiltrados.map(atleta => (
 
-              <button
-                onClick={() =>
-                  excluirAtleta(atleta.id)
-                }
-              >
-                Excluir
-              </button>
+                <tr key={atleta.id}>
 
-            </li>
+                  <td>{atleta.id}</td>
 
-          ))}
+                  <td>{atleta.nome}</td>
 
-        </ul>
+                  <td>{atleta.idade}</td>
+
+                  <td>{atleta.telefone}</td>
+
+                  <td>
+                    {atleta.posicao || "-"}
+                  </td>
+
+                  <td>
+
+                    <span
+                      className={
+                        atleta.ativo
+                          ? "badge badge-paga"
+                          : "badge badge-cancelada"
+                      }
+                    >
+
+                      {atleta.ativo
+                        ? "Ativo"
+                        : "Inativo"}
+
+                    </span>
+
+                  </td>
+
+                  <td>
+
+                    <button
+                      className="btn-sm btn-success"
+                      onClick={() =>
+                        editarAtleta(atleta.id)
+                      }
+                    >
+                      Editar
+                    </button>
+
+                    <button
+                      className="btn-sm btn-danger"
+                      onClick={() =>
+                        excluirAtleta(atleta.id)
+                      }
+                    >
+                      Inativar
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              ))}
+
+            </tbody>
+
+          </table>
+
+        </div>
 
       )}
+
+      {/* PAGINAÇÃO */}
+
+      <div className="paginacao">
+
+        <button
+          className="btn-sm"
+          disabled={pagina === 0}
+          onClick={() =>
+            setPagina(pagina - 1)
+          }
+        >
+          ← Anterior
+        </button>
+
+        <span>
+
+          Página {pagina + 1}
+          de {totalPaginas}
+
+        </span>
+
+        <button
+          className="btn-sm"
+          disabled={pagina >= totalPaginas - 1}
+          onClick={() =>
+            setPagina(pagina + 1)
+          }
+        >
+          Próxima →
+        </button>
+
+      </div>
 
     </div>
 

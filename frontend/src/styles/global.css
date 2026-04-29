@@ -358,3 +358,526 @@ main {
   border-color: var(--Vermelho-svc);
 
 }
+
+/* ========================= */
+/* LAYOUT ADMIN */
+/* ========================= */
+
+.layout {
+
+  display: flex;
+
+  height: 100vh;
+
+}
+
+/* SIDEBAR */
+
+.sidebar {
+
+  width: 220px;
+
+  background-color: var(--Azul-svc);
+
+  color: white;
+
+  padding: 20px;
+
+  display: flex;
+
+  flex-direction: column;
+
+}
+
+.logo-text {
+
+  color: white;
+
+  margin-bottom: 30px;
+
+}
+
+/* MENU */
+
+.menu {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 15px;
+
+}
+
+.menu a {
+
+  color: white;
+
+  text-decoration: none;
+
+  font-weight: bold;
+
+  padding: 10px;
+
+  border-radius: 8px;
+
+  transition: 0.3s;
+
+}
+
+.menu a:hover {
+
+  background-color: rgba(255,255,255,0.15);
+
+}
+
+/* MAIN */
+
+.main {
+
+  flex: 1;
+
+  display: flex;
+
+  flex-direction: column;
+
+}
+
+/* HEADER */
+
+.header {
+
+  height: 60px;
+
+  background-color: white;
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  align-items: center;
+
+  padding: 0 20px;
+
+  border-bottom: 1px solid #ddd;
+
+}
+
+/* CONTENT */
+
+.content {
+
+  flex: 1;
+
+  padding: 25px;
+
+  background-color: var(--cinza-bg);
+
+}
+/* ========================= */
+/* CARDS */
+/* ========================= */
+
+.card {
+
+  background-color: white;
+
+  border-radius: 14px;
+
+  padding: 25px;
+
+  margin-bottom: 25px;
+
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+
+  border: 1px solid #e5e7eb;
+
+}
+
+/* TÍTULOS DOS CARDS */
+
+.card h2 {
+
+  margin-bottom: 20px;
+
+}
+
+/* GRID DO FORM */
+
+.form-grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 15px;
+
+  margin-bottom: 20px;
+
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 768px) {
+
+  .form-grid {
+
+    grid-template-columns: 1fr;
+
+  }
+
+}
+
+/* ========================= */
+/* ABAS */
+/* ========================= */
+
+.abas {
+
+  display: flex;
+
+  gap: 10px;
+
+  margin-bottom: 20px;
+
+}
+
+.abas button {
+
+  padding: 12px 20px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background-color: #e5e7eb;
+
+  cursor: pointer;
+
+  font-weight: bold;
+
+  transition: 0.2s;
+
+}
+
+.abas button:hover {
+
+  background-color: #d1d5db;
+
+}
+
+.aba-ativa {
+
+  background-color: var(--Azul-svc);
+
+  color: white;
+
+}
+
+/* ========================= */
+/* ADMIN CONTAINER */
+/* ========================= */
+
+.admin-container {
+
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  padding: 20px;
+
+}
+
+/* ========================= */
+/* BOTÃO PRINCIPAL */
+/* ========================= */
+
+.btn-primary {
+
+  background-color: var(--Azul-svc);
+
+  color: white;
+
+  padding: 14px 20px;
+
+  border-radius: 10px;
+
+  border: none;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+
+}
+
+.btn-primary:hover {
+
+  background-color: #1a4369;
+
+  transform: translateY(-1px);
+
+}
+
+.header-mensalidades {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 15px;
+
+}
+
+/* ========================= */
+/* TABELAS */
+/* ========================= */
+
+.table-container {
+
+  overflow-x: auto;
+
+}
+
+.table {
+
+  width: 100%;
+
+  border-collapse: collapse;
+
+  background-color: white;
+
+  border-radius: 12px;
+
+  overflow: hidden;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+
+}
+
+.table thead {
+
+  background-color: var(--Azul-svc);
+
+  color: white;
+
+}
+
+.table th {
+
+  padding: 14px;
+
+  text-align: left;
+
+  font-weight: bold;
+
+}
+
+.table td {
+
+  padding: 14px;
+
+  border-bottom: 1px solid #eee;
+
+}
+
+.table tbody tr:nth-child(even) {
+
+  background-color: #f9fafb;
+
+}
+
+.table tbody tr:hover {
+
+  background-color: #eef4f8;
+
+}
+
+/* ========================= */
+/* BADGES STATUS */
+/* ========================= */
+
+.badge {
+
+  padding: 6px 12px;
+
+  border-radius: 999px;
+
+  font-size: 13px;
+
+  font-weight: bold;
+
+  display: inline-block;
+
+}
+
+.badge-paga {
+
+  background-color: #d4edda;
+
+  color: #155724;
+
+}
+
+.badge-pendente {
+
+  background-color: #fff3cd;
+
+  color: #856404;
+
+}
+
+.badge-vencida {
+
+  background-color: #f8d7da;
+
+  color: #721c24;
+
+}
+
+.badge-cancelada {
+
+  background-color: #e2e3e5;
+
+  color: #383d41;
+
+}
+
+/* ========================= */
+/* BOTÕES SMALL */
+/* ========================= */
+
+.btn-sm {
+
+  padding: 6px 12px;
+
+  border-radius: 6px;
+
+  font-size: 13px;
+
+  font-weight: bold;
+
+  border: none;
+
+  cursor: pointer;
+
+}
+
+.btn-success {
+
+  background-color: #28a745;
+
+  color: white;
+
+}
+
+.btn-success:hover {
+
+  background-color: #218838;
+
+}
+
+.btn-danger {
+
+  background-color: #dc3545;
+
+  color: white;
+
+}
+
+.btn-danger:hover {
+
+  background-color: #c82333;
+
+}
+/* ========================= */
+/* FILTROS */
+/* ========================= */
+
+.filtros {
+
+  display: flex;
+
+  gap: 10px;
+
+  flex-wrap: wrap;
+
+  margin-bottom: 20px;
+
+}
+
+.filtro-btn {
+
+  padding: 8px 16px;
+
+  border-radius: 999px;
+
+  border: none;
+
+  background-color: #e5e7eb;
+
+  cursor: pointer;
+
+  font-weight: bold;
+
+}
+
+.filtro-btn.ativo {
+
+  background-color: var(--Azul-svc);
+
+  color: white;
+
+}
+.loading {
+
+  text-align: center;
+
+  padding: 30px;
+
+  color: #666;
+
+}
+.erro-box {
+
+  background-color: #f8d7da;
+
+  color: #721c24;
+
+  padding: 15px;
+
+  border-radius: 10px;
+
+}
+
+.btn-danger {
+
+  background-color: #dc3545;
+
+  color: white;
+
+}
+/* PAGINAÇÃO */
+
+.paginacao {
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 15px;
+
+  margin-top: 20px;
+
+}
+
+.paginacao span {
+
+  font-weight: bold;
+
+}

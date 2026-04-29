@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import Inicio from '../pages/Inicio'
-import Login from '../pages/Login'
+import CompletarCadastro from "../pages/CompletarCadastro"
 import Cadastro from '../pages/Cadastro'
 import Home from '../pages/Home'
 import Admin from '../pages/Admin'
@@ -17,9 +17,6 @@ function AppRoutes() {
       <Routes>
 
         <Route path="/" element={<Inicio />} />
-
-        <Route path="/login" element={<Login />} />
-
         <Route path="/cadastro" element={<Cadastro />} />
 
         {/* ROTAS PROTEGIDAS */}
@@ -29,6 +26,15 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <Home />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/completar-cadastro"
+          element={
+            <ProtectedRoute>
+              <CompletarCadastro />
             </ProtectedRoute>
           }
         />
