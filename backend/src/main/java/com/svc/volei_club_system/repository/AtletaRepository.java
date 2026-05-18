@@ -27,4 +27,8 @@ List<AtletaModel> findByAtivoTrue();
 
  Optional<AtletaModel> findByUsuarioId(Long usuarioId);
 
+ Optional<AtletaModel> findByUsuario(
+        UsuarioModel usuario
+);
+
 }

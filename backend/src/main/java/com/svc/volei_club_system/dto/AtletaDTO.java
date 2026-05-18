@@ -2,18 +2,21 @@ package com.svc.volei_club_system.dto;
 
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
 public class AtletaDTO {
 
     private Long id;
 
     private String nome;
 
-    private Integer idade;
+    private LocalDate dataNascimento;
 
     private String telefone;
 
@@ -25,4 +28,7 @@ public class AtletaDTO {
 
     private Boolean ativo;
 
+    private String telefoneResponsavel;
+
+    private Boolean perfilCompleto;
 }

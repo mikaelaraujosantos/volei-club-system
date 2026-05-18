@@ -30,54 +30,95 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public LoginResponseDTO login(@RequestBody LoginDTO loginDTO) {
+public LoginResponseDTO login(
+        @RequestBody LoginDTO loginDTO
+) {
 
-        // Buscar usuário
-        UsuarioModel usuario =
-                usuarioService.buscarPorEmail(loginDTO.getEmail());
+    // =========================
+    // BUSCAR USUÁRIO
+    // =========================
 
-        // Verificar senha corretamente
-        if (!passwordEncoder.matches(
-                loginDTO.getSenha(),
-                usuario.getSenha()
-        )) {
-
-            throw new RuntimeException(
-                    "Email ou senha inválidos"
+    UsuarioModel usuario =
+            usuarioService.buscarPorEmail(
+                    loginDTO.getEmail()
             );
 
-        }
+    // =========================
+    // VALIDAR SENHA
+    // =========================
 
-        // Role como String
-        String roleString =
-                usuario.getRole().name();
+    if (
+            !passwordEncoder.matches(
+                    loginDTO.getSenha(),
+                    usuario.getSenha()
+            )
+    ) {
 
-        // Gerar token
-        String token =
-                jwtUtil.gerarToken(
-                        usuario.getEmail(),
-                        roleString
-                );
-
-        // Buscar atletaId se for atleta
-        Long atletaId = null;
-
-        if (roleString.equals("ATLETA")) {
-    AtletaModel atleta = atletaService.buscarPorUsuarioId(usuario.getId());
-
-    if (atleta != null) {
-        atletaId = atleta.getId();
-    }
-}
-
-        
-
-        return new LoginResponseDTO(
-                token,
-                roleString,
-                atletaId
+        throw new RuntimeException(
+                "Email ou senha inválidos"
         );
 
     }
 
+    // =========================
+    // ROLE
+    // =========================
+
+    String roleString =
+            usuario.getRole().name();
+
+    // =========================
+    // TOKEN
+    // =========================
+
+    String token =
+            jwtUtil.gerarToken(
+                    usuario.getEmail(),
+                    roleString
+            );
+
+    // =========================
+    // DADOS DO ATLETA
+    // =========================
+
+    Long atletaId = null;
+
+    Boolean perfilCompleto = true;
+
+    if (roleString.equals("ATLETA")) {
+
+        AtletaModel atleta =
+                atletaService.buscarPorUsuarioId(
+                        usuario.getId()
+                );
+
+        if (atleta != null) {
+
+            atletaId =
+                    atleta.getId();
+
+            perfilCompleto =
+                    atleta.getPerfilCompleto();
+
+        }
+
+    }
+
+    // =========================
+    // RESPONSE
+    // =========================
+
+    return new LoginResponseDTO(
+
+            token,
+
+            roleString,
+
+            atletaId,
+
+            perfilCompleto
+
+    );
+
+}
 }

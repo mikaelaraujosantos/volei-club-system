@@ -28,7 +28,9 @@ public class AdminInitializer {
                 UsuarioModel admin = new UsuarioModel();
 
                 admin.setNome("Administrador");
-                admin.setIdade(30);
+                admin.setDataNascimento(
+        java.time.LocalDate.of(2000, 1, 1)
+);
                 admin.setTelefone("(74)99999-9999");
 
                 admin.setEmail(email);

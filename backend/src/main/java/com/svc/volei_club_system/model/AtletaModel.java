@@ -5,13 +5,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "atleta")
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class AtletaModel {
 
     @Id
@@ -20,7 +24,7 @@ public class AtletaModel {
 
     private String nome;
 
-    private Integer idade;
+    private LocalDate dataNascimento;
 
     private String telefone;
 
@@ -30,7 +34,11 @@ public class AtletaModel {
 
     private String responsavel;
 
+    private String telefoneResponsavel;
+
     private Boolean ativo;
+
+    private Boolean perfilCompleto;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")

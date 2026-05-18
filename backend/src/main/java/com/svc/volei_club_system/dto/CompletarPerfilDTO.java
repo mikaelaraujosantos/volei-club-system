@@ -5,13 +5,9 @@ import java.time.LocalDate;
 import lombok.Data;
 
 @Data
-public class AtletaCreateDTO {
-
-    private String nome;
+public class CompletarPerfilDTO {
 
     private LocalDate dataNascimento;
-
-    private String telefone;
 
     private String posicao;
 
@@ -20,9 +16,5 @@ public class AtletaCreateDTO {
     private String responsavel;
 
     private String telefoneResponsavel;
-
-    private Boolean ativo;
-
-    private Boolean perfilCompleto;
 
 }

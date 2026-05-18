@@ -14,7 +14,7 @@ import com.svc.volei_club_system.repository.AtletaRepository;
 import com.svc.volei_club_system.service.AtletaService;
 import com.svc.volei_club_system.service.UsuarioService;
 import com.svc.volei_club_system.enums.Role;
-
+import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
@@ -138,14 +138,17 @@ public class AtletaController {
             // =========================
 
             try {
+
                 usuarioService.buscarPorEmail(dto.getEmail());
 
                 return ResponseEntity
                         .badRequest()
                         .body("Email já está em uso!");
 
-            } catch (Exception e) {
-                // email não existe → continuar
+            }
+
+            catch (Exception e) {
+                // email não existe
             }
 
             // =========================
@@ -156,7 +159,11 @@ public class AtletaController {
                     new UsuarioModel();
 
             usuario.setNome(dto.getNome());
-            usuario.setIdade(dto.getIdade());
+
+            usuario.setDataNascimento(
+                    dto.getDataNascimento()
+            );
+
             usuario.setTelefone(dto.getTelefone());
 
             usuario.setEmail(dto.getEmail());
@@ -176,7 +183,11 @@ public class AtletaController {
                     new AtletaModel();
 
             atleta.setNome(dto.getNome());
-            atleta.setIdade(dto.getIdade());
+
+            atleta.setDataNascimento(
+                    dto.getDataNascimento()
+            );
+
             atleta.setTelefone(dto.getTelefone());
 
             atleta.setPosicao(dto.getPosicao());
@@ -184,6 +195,7 @@ public class AtletaController {
             atleta.setResponsavel(dto.getResponsavel());
 
             atleta.setAtivo(true);
+
             atleta.setUsuario(usuarioSalvo);
 
             AtletaModel atletaSalvo =
@@ -207,5 +219,41 @@ public class AtletaController {
         }
 
     }
+    @PutMapping("/completar-perfil")
+public ResponseEntity<?> completarPerfil(
+        @RequestBody CompletarPerfilDTO dto,
+        HttpServletRequest request
+) {
+
+    try {
+
+        String email =
+                (String) request.getAttribute("email");
+
+        AtletaModel atleta =
+                atletaService.completarPerfil(
+                        dto,
+                        email
+                );
+
+        return ResponseEntity.ok(
+                AtletaMapper.toDTO(atleta)
+        );
+
+    }
+    catch (Exception e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(
+                        Map.of(
+                                "erro",
+                                e.getMessage()
+                        )
+                );
+
+    }
+
+}
 
 }

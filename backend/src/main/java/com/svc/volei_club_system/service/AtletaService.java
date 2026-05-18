@@ -1,20 +1,18 @@
 package com.svc.volei_club_system.service;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
+import com.svc.volei_club_system.dto.*;
+import com.svc.volei_club_system.enums.Role;
+import com.svc.volei_club_system.exception.ResourceNotFoundException;
 import com.svc.volei_club_system.model.AtletaModel;
 import com.svc.volei_club_system.model.UsuarioModel;
 import com.svc.volei_club_system.repository.AtletaRepository;
 import com.svc.volei_club_system.repository.UsuarioRepository;
-import com.svc.volei_club_system.exception.ResourceNotFoundException;
-import com.svc.volei_club_system.enums.Role;
-
-import org.springframework.data.domain.Pageable;
-
+import java.time.LocalDate;
+import java.time.Period;
 @Service
 public class AtletaService {
 
@@ -59,7 +57,7 @@ public class AtletaService {
     }
 
     // =========================
-    // LISTAR (COM ADMIN)
+    // LISTAR
     // =========================
 
     public Page<AtletaModel> listarAtletas(
@@ -70,15 +68,11 @@ public class AtletaService {
         UsuarioModel usuario =
                 buscarUsuario(emailUsuario);
 
-        // ADMIN vê todos
-
         if (usuario.getRole() == Role.ADMIN) {
 
             return atletaRepository.findAll(pageable);
 
         }
-
-        // USER vê só os seus
 
         return atletaRepository
                 .findByUsuario(usuario, pageable);
@@ -97,8 +91,6 @@ public class AtletaService {
         UsuarioModel usuario =
                 buscarUsuario(emailUsuario);
 
-        // ADMIN pode acessar qualquer atleta
-
         if (usuario.getRole() == Role.ADMIN) {
 
             return atletaRepository
@@ -110,8 +102,6 @@ public class AtletaService {
                     );
 
         }
-
-        // USER só os próprios
 
         return atletaRepository
                 .findByIdAndUsuario(id, usuario)
@@ -161,7 +151,11 @@ public class AtletaService {
         }
 
         atleta.setNome(dados.getNome());
-        atleta.setIdade(dados.getIdade());
+
+        atleta.setDataNascimento(
+                dados.getDataNascimento()
+        );
+
         atleta.setTelefone(dados.getTelefone());
         atleta.setPosicao(dados.getPosicao());
         atleta.setAltura(dados.getAltura());
@@ -173,7 +167,7 @@ public class AtletaService {
     }
 
     // =========================
-    // DELETAR (DESATIVAR)
+    // DELETAR
     // =========================
 
     public void deletarAtleta(
@@ -208,8 +202,8 @@ public class AtletaService {
 
         }
 
-        // Em vez de deletar, apenas desativa o atleta
         atleta.setAtivo(false);
+
         atletaRepository.save(atleta);
 
     }
@@ -255,6 +249,12 @@ public class AtletaService {
             atleta.setNome(dados.getNome());
         }
 
+        if (dados.getDataNascimento() != null) {
+            atleta.setDataNascimento(
+                    dados.getDataNascimento()
+            );
+        }
+
         if (dados.getTelefone() != null) {
             atleta.setTelefone(dados.getTelefone());
         }
@@ -275,20 +275,120 @@ public class AtletaService {
             atleta.setAtivo(dados.getAtivo());
         }
 
-        if (dados.getIdade() != null) {
-            atleta.setIdade(dados.getIdade());
-        }
-
         return atletaRepository.save(atleta);
 
     }
 
     // =========================
-    // BUSCAR ATLETA POR USUÁRIO ID
+    // BUSCAR POR USUÁRIO ID
     // =========================
 
     public AtletaModel buscarPorUsuarioId(Long usuarioId) {
-        return atletaRepository.findByUsuarioId(usuarioId)
+
+        return atletaRepository
+                .findByUsuarioId(usuarioId)
                 .orElse(null);
+
     }
+
+    public AtletaModel completarPerfil(
+        CompletarPerfilDTO dto,
+        String emailUsuario
+) {
+
+    UsuarioModel usuario =
+            buscarUsuario(emailUsuario);
+
+    AtletaModel atleta =
+            atletaRepository
+                    .findByUsuario(usuario)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    "Atleta não encontrado"
+                            )
+                    );
+
+    // =========================
+    // VALIDAR DATA
+    // =========================
+
+    if (dto.getDataNascimento() == null) {
+
+        throw new RuntimeException(
+                "Data de nascimento obrigatória"
+        );
+
+    }
+
+    // =========================
+    // CALCULAR IDADE
+    // =========================
+
+    int idade = Period.between(
+            dto.getDataNascimento(),
+            LocalDate.now()
+    ).getYears();
+
+    boolean menor = idade < 18;
+
+    // =========================
+    // VALIDAR RESPONSÁVEL
+    // =========================
+
+    if (menor) {
+
+        if (
+                dto.getResponsavel() == null
+                        || dto.getResponsavel().isBlank()
+        ) {
+
+            throw new RuntimeException(
+                    "Responsável obrigatório para menores"
+            );
+
+        }
+
+        if (
+                dto.getTelefoneResponsavel() == null
+                        || dto.getTelefoneResponsavel().isBlank()
+        ) {
+
+            throw new RuntimeException(
+                    "Telefone do responsável obrigatório"
+            );
+
+        }
+
+    }
+
+    // =========================
+    // SALVAR DADOS
+    // =========================
+
+    atleta.setDataNascimento(
+            dto.getDataNascimento()
+    );
+
+    atleta.setPosicao(
+            dto.getPosicao()
+    );
+
+    atleta.setAltura(
+            dto.getAltura()
+    );
+
+    atleta.setResponsavel(
+            dto.getResponsavel()
+    );
+
+    atleta.setTelefoneResponsavel(
+            dto.getTelefoneResponsavel()
+    );
+
+    atleta.setPerfilCompleto(true);
+
+    return atletaRepository.save(atleta);
+
+}
+
 }
