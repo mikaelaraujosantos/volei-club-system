@@ -1,93 +1,262 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+
 import ListaMensalidades from '../components/ListaMensalidades';
 
 function Home() {
-  const [atletaId, setAtletaId] = useState(null);
-  const [dadosAtleta, setDadosAtleta] = useState(null);
-  const [carregando, setCarregando] = useState(true); // <-- ESTAVA FALTANDO ESTA LINHA
+
+  const navigate = useNavigate();
+
+  const [atletaId, setAtletaId] =
+    useState(null);
+
+  const [dadosAtleta, setDadosAtleta] =
+    useState(null);
+
+  const [carregando, setCarregando] =
+    useState(true);
+
+  // =========================
+  // VERIFICAR PERFIL
+  // =========================
 
   useEffect(() => {
-    // Função para carregar dados do atleta
-    async function carregarDadosAtleta() {
-      try {
-        const id = localStorage.getItem('atletaId');
-        
-        if (!id) {
-          console.log('Atleta não está logado');
-          setCarregando(false);
-          return;
-        }
-        
-        const token = localStorage.getItem('token');
-        
-        // Buscar dados do atleta
-        const response = await fetch(`http://localhost:8080/atletas/${id}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (response.ok) {
-          const atleta = await response.json();
-          setDadosAtleta(atleta);
-          setAtletaId(parseInt(id));
-        }
-      } catch (erro) {
-        console.error('Erro ao carregar dados do atleta:', erro);
-      } finally {
-        setCarregando(false);
-      }
+
+    const perfilCompleto =
+      localStorage.getItem(
+        "perfilCompleto"
+      );
+
+    if (perfilCompleto !== "true") {
+
+      navigate("/completar-perfil");
+
     }
-    
-    carregarDadosAtleta();
+
   }, []);
 
+  // =========================
+  // CARREGAR DADOS
+  // =========================
+
+  useEffect(() => {
+
+    async function carregarDadosAtleta() {
+
+      try {
+
+        const id =
+          localStorage.getItem(
+            'atletaId'
+          );
+
+        if (!id) {
+
+          console.log(
+            'Atleta não está logado'
+          );
+
+          setCarregando(false);
+
+          return;
+
+        }
+
+        const token =
+          localStorage.getItem(
+            'token'
+          );
+
+        const response =
+          await fetch(
+            `http://localhost:8080/atletas/${id}`,
+            {
+              headers: {
+                'Authorization':
+                  `Bearer ${token}`
+              }
+            }
+          );
+
+        if (response.ok) {
+
+          const atleta =
+            await response.json();
+
+          setDadosAtleta(atleta);
+
+          setAtletaId(parseInt(id));
+
+        }
+
+      }
+
+      catch (erro) {
+
+        console.error(
+          'Erro ao carregar dados do atleta:',
+          erro
+        );
+
+      }
+
+      finally {
+
+        setCarregando(false);
+
+      }
+
+    }
+
+    carregarDadosAtleta();
+
+  }, []);
+
+  // =========================
+  // LOADING
+  // =========================
+
   if (carregando) {
+
     return (
+
       <div className="loading-container">
-        <p>Carregando seus dados...</p>
+
+        <p>
+          Carregando seus dados...
+        </p>
+
       </div>
+
     );
+
   }
+
+  // =========================
+  // NÃO LOGADO
+  // =========================
 
   if (!atletaId || !dadosAtleta) {
+
     return (
+
       <main className="home-container">
-        <h1>Área do Atleta</h1>
+
+        <h1>
+          Área do Atleta
+        </h1>
+
         <div className="card">
-          <p>Você não está logado como atleta.</p>
-          <button onClick={() => window.location.href = '/'}>
+
+          <p>
+            Você não está logado
+            como atleta.
+          </p>
+
+          <button
+            onClick={() =>
+              window.location.href = '/'
+            }
+          >
+
             Fazer Login
+
           </button>
+
         </div>
+
       </main>
+
     );
+
   }
 
+  // =========================
+  // JSX
+  // =========================
+
   return (
+
     <main className="home-container">
-      <h1>Área do Atleta</h1>
-      
+
+      <h1>
+        Área do Atleta
+      </h1>
+
       <div className="welcome-section">
-        <p>Bem-vindo, {dadosAtleta.nome}!</p>
-        <p>Este é o sistema do Sobradinho Vôlei Clube.</p>
+
+        <p>
+          Bem-vindo,
+          {dadosAtleta.nome}!
+        </p>
+
+        <p>
+          Este é o sistema do
+          Sobradinho Vôlei Clube.
+        </p>
+
       </div>
 
       <div className="card">
-        <h2>Minhas Informações</h2>
+
+        <h2>
+          Minhas Informações
+        </h2>
+
         <div className="info-atleta">
-          <p><strong>Posição:</strong> {dadosAtleta.posicao || 'Não informada'}</p>
-          <p><strong>Telefone:</strong> {dadosAtleta.telefone}</p>
-          <p><strong>Responsável:</strong> {dadosAtleta.responsavel || 'Não informado'}</p>
+
+          <p>
+            <strong>
+              Posição:
+            </strong>
+
+            {" "}
+
+            {dadosAtleta.posicao ||
+              'Não informada'}
+          </p>
+
+          <p>
+            <strong>
+              Telefone:
+            </strong>
+
+            {" "}
+
+            {dadosAtleta.telefone}
+          </p>
+
+          <p>
+            <strong>
+              Responsável:
+            </strong>
+
+            {" "}
+
+            {dadosAtleta.responsavel ||
+              'Não informado'}
+          </p>
+
         </div>
+
       </div>
 
       <div className="card">
-        <h2>Minhas Mensalidades</h2>
-        <ListaMensalidades atletaId={atletaId} />
+
+        <h2>
+          Minhas Mensalidades
+        </h2>
+
+        <ListaMensalidades
+          atletaId={atletaId}
+        />
+
       </div>
+
     </main>
+
   );
+
 }
 
 export default Home;

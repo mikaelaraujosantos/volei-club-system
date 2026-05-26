@@ -21,12 +21,23 @@ function Inicio() {
 
   async function entrar() {
 
+    // =========================
+    // VALIDAR CAMPOS
+    // =========================
+
     if (email === "" || senha === "") {
+
       alert("Preencha email e senha")
+
       return
+
     }
 
     try {
+
+      // =========================
+      // LOGIN
+      // =========================
 
       const response = await fetch(
         "http://localhost:8080/auth/login",
@@ -42,36 +53,81 @@ function Inicio() {
         }
       )
 
+      // =========================
+      // ERRO
+      // =========================
+
       if (!response.ok) {
-        alert("Email ou senha inválidos")
+
+        const erro = await response.text()
+
+        alert(erro)
+
         return
+
       }
+
+      // =========================
+      // SUCESSO
+      // =========================
 
       const data = await response.json()
 
-      localStorage.setItem("token", data.token)
-      localStorage.setItem("role", data.role)
+      // =========================
+      // SALVAR DADOS
+      // =========================
+
+      localStorage.setItem(
+        "token",
+        data.token
+      )
+
+      localStorage.setItem(
+        "role",
+        data.role
+      )
 
       if (data.atletaId) {
-        localStorage.setItem("atletaId", data.atletaId)
+
+        localStorage.setItem(
+          "atletaId",
+          data.atletaId
+        )
+
       }
+
+      // =========================
+      // LOGIN OK
+      // =========================
 
       alert("Login realizado com sucesso")
 
-      // 🔥 REDIRECIONAMENTO INTELIGENTE
+      // =========================
+      // ADMIN
+      // =========================
 
       if (data.role === "ADMIN") {
 
         navigate("/admin")
 
-      } 
+      }
+
+      // =========================
+      // ATLETA
+      // =========================
+
       else {
 
-        if (!data.atletaId) {
+        // PERFIL INCOMPLETO
+
+        if (!data.perfilCompleto) {
 
           navigate("/completar-cadastro")
 
-        } 
+        }
+
+        // PERFIL COMPLETO
+
         else {
 
           navigate("/home")
@@ -85,19 +141,26 @@ function Inicio() {
     catch (error) {
 
       console.error(error)
-      alert("Erro ao conectar com o servidor")
+
+      alert(
+        "Erro ao conectar com o servidor"
+      )
 
     }
 
   }
 
   function irCadastro() {
+
     navigate("/cadastro")
+
   }
 
   return (
 
     <main>
+
+      {/* TOPO */}
 
       <div className="topo">
 
@@ -108,6 +171,8 @@ function Inicio() {
         />
 
       </div>
+
+      {/* LOGIN */}
 
       <div className="area-login">
 
@@ -128,14 +193,18 @@ function Inicio() {
             type="email"
             placeholder="Digite seu email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) =>
+              setEmail(e.target.value)
+            }
           />
 
           <Input
             type="password"
             placeholder="Digite sua senha"
             value={senha}
-            onChange={(e) => setSenha(e.target.value)}
+            onChange={(e) =>
+              setSenha(e.target.value)
+            }
           />
 
           <Button
@@ -151,6 +220,8 @@ function Inicio() {
         </div>
 
       </div>
+
+      {/* RODAPÉ */}
 
       <div className="rodape">
 

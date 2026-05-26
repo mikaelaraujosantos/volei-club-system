@@ -881,3 +881,167 @@ main {
   font-weight: bold;
 
 }
+
+
+/* ========================= */
+/* COMPLETAR PERFIL */
+/* ========================= */
+
+.container-completar {
+
+  width: 100%;
+  max-width: 500px;
+
+}
+
+.card-completar {
+
+  background: white;
+
+  border-radius: 18px;
+
+  padding: 35px;
+
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+
+  border: 1px solid #e5e7eb;
+
+}
+
+.card-completar h2 {
+
+  text-align: center;
+
+  margin-bottom: 10px;
+
+  color: var(--Azul-svc);
+
+}
+
+.subtitulo-completar {
+
+  text-align: center;
+
+  color: #666;
+
+  margin-bottom: 30px;
+
+  font-size: 15px;
+
+}
+
+.form-completar {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 18px;
+
+}
+
+.label-completar {
+
+  font-weight: bold;
+
+  color: var(--Azul-svc);
+
+  margin-bottom: -8px;
+
+  font-size: 15px;
+
+}
+
+.select-completar {
+
+  padding: 16px;
+
+  border-radius: 10px;
+
+  border: 1.5px solid #ccc;
+
+  font-size: 16px;
+
+  width: 100%;
+
+  background-color: white;
+
+}
+
+.select-completar:focus {
+
+  outline: none;
+
+  border-color: var(--Vermelho-svc);
+
+  box-shadow: 0 0 6px rgba(205, 18, 42, 0.3);
+
+}
+
+.info-menor {
+
+  background-color: #fff3cd;
+
+  color: #856404;
+
+  padding: 14px;
+
+  border-radius: 10px;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+
+  border: 1px solid #ffeeba;
+
+}
+
+.grupo-responsavel {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 18px;
+
+  animation: fadeIn 0.3s ease;
+
+}
+
+.botao-finalizar {
+
+  margin-top: 10px;
+
+  width: 100%;
+
+}
+
+@keyframes fadeIn {
+
+  from {
+
+    opacity: 0;
+    transform: translateY(10px);
+
+  }
+
+  to {
+
+    opacity: 1;
+    transform: translateY(0);
+
+  }
+
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 600px) {
+
+  .card-completar {
+
+    padding: 25px;
+
+  }
+
+}

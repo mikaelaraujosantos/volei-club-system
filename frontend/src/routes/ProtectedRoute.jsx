@@ -1,19 +1,61 @@
-import { Navigate } from "react-router-dom"
+import { Navigate } from "react-router-dom";
 
-function ProtectedRoute({ children }) {
+export default function ProtectedRoute({
+  children
+}) {
 
-  const token = localStorage.getItem("token")
+  const token =
+    localStorage.getItem("token");
 
-  // se NÃO tiver token → volta login
+  const role =
+    localStorage.getItem("role");
+
+  const perfilCompleto =
+    localStorage.getItem(
+      "perfilCompleto"
+    );
+
+  // =========================
+  // SEM LOGIN
+  // =========================
+
   if (!token) {
 
-    return <Navigate to="/" />
+    return <Navigate to="/" />;
 
   }
 
-  // se tiver token → entra
-  return children
+  // =========================
+  // ADMIN
+  // =========================
+
+  if (role === "ADMIN") {
+
+    return children;
+
+  }
+
+  // =========================
+  // ATLETA SEM PERFIL
+  // =========================
+
+  if (
+    role === "ATLETA" &&
+    perfilCompleto !== "true"
+  ) {
+
+    return (
+      <Navigate
+        to="/completar-perfil"
+      />
+    );
+
+  }
+
+  // =========================
+  // LIBERADO
+  // =========================
+
+  return children;
 
 }
-
-export default ProtectedRoute

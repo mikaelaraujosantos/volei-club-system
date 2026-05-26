@@ -7,7 +7,7 @@ import Home from '../pages/Home'
 import Admin from '../pages/Admin'
 import EditarAtleta from "../pages/EditarAtleta";
 import ProtectedRoute from './ProtectedRoute'
-
+import CompletarPerfil from "../pages/CompletarPerfil";
 function AppRoutes() {
 
   return (
@@ -51,6 +51,11 @@ function AppRoutes() {
         <Route
           path="/editar/:id"
           element={<EditarAtleta />}
+        />
+
+        <Route
+          path="/completar-perfil"
+          element={<CompletarPerfil />}
         />
 
       </Routes>

@@ -14,42 +14,65 @@ export default function ListaAtletas() {
 
   const navigate = useNavigate();
 
+  // =========================
+  // BUSCAR ATLETAS
+  // =========================
+
   useEffect(() => {
+
     buscarAtletas();
+
   }, [pagina]);
 
   async function buscarAtletas() {
 
     setCarregando(true);
+
     setErro(null);
 
     try {
 
-      const token = localStorage.getItem("token");
+      const token =
+        localStorage.getItem("token");
 
       const response = await fetch(
         `http://localhost:8080/atletas?page=${pagina}&size=10`,
         {
+
           method: "GET",
+
           headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json"
+
+            Authorization:
+              `Bearer ${token}`,
+
+            "Content-Type":
+              "application/json"
+
           }
+
         }
       );
 
       if (!response.ok) {
+
         throw new Error(
           `HTTP ${response.status}`
         );
+
       }
 
-      const data = await response.json();
+      const data =
+        await response.json();
 
       setAtletas(data.content);
-      setTotalPaginas(data.totalPages);
+
+      setTotalPaginas(
+        data.totalPages
+      );
 
     }
+
     catch (erro) {
 
       console.error(erro);
@@ -59,6 +82,7 @@ export default function ListaAtletas() {
       setAtletas([]);
 
     }
+
     finally {
 
       setCarregando(false);
@@ -67,30 +91,53 @@ export default function ListaAtletas() {
 
   }
 
+  // =========================
+  // EDITAR
+  // =========================
+
   function editarAtleta(id) {
 
     navigate(`/editar/${id}`);
 
   }
 
+  // =========================
+  // INATIVAR
+  // =========================
+
   async function excluirAtleta(id) {
 
-    if (!window.confirm("Deseja inativar este atleta?")) {
+    if (
+      !window.confirm(
+        "Deseja inativar este atleta?"
+      )
+    ) {
+
       return;
+
     }
 
     try {
 
-      const token = localStorage.getItem("token");
+      const token =
+        localStorage.getItem("token");
 
       const response = await fetch(
         `http://localhost:8080/atletas/${id}`,
         {
+
           method: "DELETE",
+
           headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json"
+
+            Authorization:
+              `Bearer ${token}`,
+
+            "Content-Type":
+              "application/json"
+
           }
+
         }
       );
 
@@ -98,62 +145,171 @@ export default function ListaAtletas() {
 
         buscarAtletas();
 
+        alert(
+          "Atleta inativado!"
+        );
+
       }
+
       else {
 
-        alert("Erro ao inativar atleta");
+        const erro =
+          await response.text();
+
+        alert(
+          "Erro ao inativar: "
+          + erro
+        );
 
       }
 
     }
+
     catch (error) {
 
       console.error(error);
 
-      alert("Erro ao inativar atleta");
+      alert(
+        "Erro ao inativar atleta"
+      );
 
     }
 
   }
 
-  /* FILTRO BUSCA */
+  // =========================
+  // ATIVAR
+  // =========================
 
-  const atletasFiltrados = atletas.filter(atleta =>
-    atleta.nome
-      .toLowerCase()
-      .includes(busca.toLowerCase())
-  );
+  async function ativarAtleta(id) {
+
+    try {
+
+      const token =
+        localStorage.getItem("token");
+
+      const response = await fetch(
+        `http://localhost:8080/atletas/${id}/ativar`,
+        {
+
+          method: "PUT",
+
+          headers: {
+
+            Authorization:
+              `Bearer ${token}`,
+
+            "Content-Type":
+              "application/json"
+
+          }
+
+        }
+      );
+
+      if (response.ok) {
+
+        buscarAtletas();
+
+        alert(
+          "Atleta ativado!"
+        );
+
+      }
+
+      else {
+
+        const erro =
+          await response.text();
+
+        alert(
+          "Erro ao ativar: "
+          + erro
+        );
+
+      }
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Erro ao ativar atleta"
+      );
+
+    }
+
+  }
+
+  // =========================
+  // FILTRO
+  // =========================
+
+  const atletasFiltrados =
+    atletas.filter(atleta =>
+
+      atleta.nome
+        .toLowerCase()
+        .includes(
+          busca.toLowerCase()
+        )
+
+    );
+
+  // =========================
+  // LOADING
+  // =========================
 
   if (carregando) {
 
     return (
+
       <div className="loading">
+
         Carregando atletas...
+
       </div>
+
     );
 
   }
 
+  // =========================
+  // ERRO
+  // =========================
+
   if (erro) {
 
     return (
+
       <div className="erro-box">
 
         <p>
-          Erro ao carregar atletas: {erro}
+          Erro ao carregar atletas:
+          {" "}
+          {erro}
         </p>
 
         <button
           className="btn-primary"
           onClick={buscarAtletas}
         >
+
           Tentar novamente
+
         </button>
 
       </div>
+
     );
 
   }
+
+  // =========================
+  // JSX
+  // =========================
 
   return (
 
@@ -168,7 +324,9 @@ export default function ListaAtletas() {
           placeholder="🔍 Buscar atleta..."
           value={busca}
           onChange={(e) =>
-            setBusca(e.target.value)
+            setBusca(
+              e.target.value
+            )
           }
           className="input-busca"
         />
@@ -180,6 +338,7 @@ export default function ListaAtletas() {
       <h2>
 
         Atletas cadastrados
+        {" "}
         ({atletasFiltrados.length})
 
       </h2>
@@ -255,20 +414,49 @@ export default function ListaAtletas() {
                     <button
                       className="btn-sm btn-success"
                       onClick={() =>
-                        editarAtleta(atleta.id)
+                        editarAtleta(
+                          atleta.id
+                        )
                       }
                     >
+
                       Editar
+
                     </button>
 
-                    <button
-                      className="btn-sm btn-danger"
-                      onClick={() =>
-                        excluirAtleta(atleta.id)
-                      }
-                    >
-                      Inativar
-                    </button>
+                    {" "}
+
+                    {atleta.ativo ? (
+
+                      <button
+                        className="btn-sm btn-danger"
+                        onClick={() =>
+                          excluirAtleta(
+                            atleta.id
+                          )
+                        }
+                      >
+
+                        Inativar
+
+                      </button>
+
+                    ) : (
+
+                      <button
+                        className="btn-sm btn-success"
+                        onClick={() =>
+                          ativarAtleta(
+                            atleta.id
+                          )
+                        }
+                      >
+
+                        Ativar
+
+                      </button>
+
+                    )}
 
                   </td>
 
@@ -292,27 +480,38 @@ export default function ListaAtletas() {
           className="btn-sm"
           disabled={pagina === 0}
           onClick={() =>
-            setPagina(pagina - 1)
+            setPagina(
+              pagina - 1
+            )
           }
         >
+
           ← Anterior
+
         </button>
 
         <span>
 
           Página {pagina + 1}
+          {" "}
           de {totalPaginas}
 
         </span>
 
         <button
           className="btn-sm"
-          disabled={pagina >= totalPaginas - 1}
+          disabled={
+            pagina >= totalPaginas - 1
+          }
           onClick={() =>
-            setPagina(pagina + 1)
+            setPagina(
+              pagina + 1
+            )
           }
         >
+
           Próxima →
+
         </button>
 
       </div>
