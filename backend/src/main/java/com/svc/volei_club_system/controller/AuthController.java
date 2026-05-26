@@ -44,6 +44,18 @@ public LoginResponseDTO login(
             );
 
     // =========================
+    // VERIFICAR SE ESTÁ ATIVO
+    // =========================
+
+    if (!usuario.getAtivo()) {
+
+        throw new RuntimeException(
+                "Perfil desativado. Entre em contato com o administrador."
+        );
+
+    }
+
+    // =========================
     // VALIDAR SENHA
     // =========================
 
@@ -111,11 +123,8 @@ public LoginResponseDTO login(
     return new LoginResponseDTO(
 
             token,
-
             roleString,
-
             atletaId,
-
             perfilCompleto
 
     );

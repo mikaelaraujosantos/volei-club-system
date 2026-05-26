@@ -18,6 +18,12 @@ public class AtletaDTO {
 
     private LocalDate dataNascimento;
 
+    // =========================
+    // IDADE
+    // =========================
+
+    private Integer idade;
+
     private String telefone;
 
     private String posicao;
@@ -31,4 +37,5 @@ public class AtletaDTO {
     private String telefoneResponsavel;
 
     private Boolean perfilCompleto;
+
 }

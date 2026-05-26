@@ -204,7 +204,16 @@ public class AtletaService {
 
         atleta.setAtivo(false);
 
-        atletaRepository.save(atleta);
+// INATIVAR USUÁRIO TAMBÉM
+
+UsuarioModel usuarioAtleta =
+        atleta.getUsuario();
+
+usuarioAtleta.setAtivo(false);
+
+usuarioRepository.save(usuarioAtleta);
+
+atletaRepository.save(atleta);
 
     }
 
@@ -388,6 +397,48 @@ public class AtletaService {
     atleta.setPerfilCompleto(true);
 
     return atletaRepository.save(atleta);
+
+}
+
+        // =========================
+// REATIVAR ATLETA
+// =========================
+
+public void ativarAtleta(
+        Long id,
+        String emailUsuario
+) {
+
+    UsuarioModel usuario =
+            buscarUsuario(emailUsuario);
+
+    if (usuario.getRole() != Role.ADMIN) {
+
+        throw new RuntimeException(
+                "Apenas admin pode ativar atleta"
+        );
+
+    }
+
+    AtletaModel atleta =
+            atletaRepository
+                    .findById(id)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    "Atleta não encontrado"
+                            )
+                    );
+
+    atleta.setAtivo(true);
+
+    UsuarioModel usuarioAtleta =
+            atleta.getUsuario();
+
+    usuarioAtleta.setAtivo(true);
+
+    usuarioRepository.save(usuarioAtleta);
+
+    atletaRepository.save(atleta);
 
 }
 

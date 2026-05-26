@@ -14,8 +14,10 @@ import com.svc.volei_club_system.repository.AtletaRepository;
 import com.svc.volei_club_system.service.AtletaService;
 import com.svc.volei_club_system.service.UsuarioService;
 import com.svc.volei_club_system.enums.Role;
-import java.util.Map;
+
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/atletas")
@@ -32,7 +34,7 @@ public class AtletaController {
     private AtletaRepository atletaRepository;
 
     // =========================
-    // LISTAR ATLETAS
+    // LISTAR
     // =========================
 
     @GetMapping
@@ -102,7 +104,7 @@ public class AtletaController {
     }
 
     // =========================
-    // DELETAR
+    // INATIVAR
     // =========================
 
     @DeleteMapping("/{id}")
@@ -123,7 +125,6 @@ public class AtletaController {
 
     // =========================
     // CADASTRO COMPLETO
-    // ATLETA + USUÁRIO
     // =========================
 
     @PostMapping("/cadastro-completo")
@@ -133,13 +134,11 @@ public class AtletaController {
 
         try {
 
-            // =========================
-            // VERIFICAR EMAIL
-            // =========================
-
             try {
 
-                usuarioService.buscarPorEmail(dto.getEmail());
+                usuarioService.buscarPorEmail(
+                        dto.getEmail()
+                );
 
                 return ResponseEntity
                         .badRequest()
@@ -152,7 +151,7 @@ public class AtletaController {
             }
 
             // =========================
-            // CRIAR USUÁRIO
+            // USUÁRIO
             // =========================
 
             UsuarioModel usuario =
@@ -164,19 +163,27 @@ public class AtletaController {
                     dto.getDataNascimento()
             );
 
-            usuario.setTelefone(dto.getTelefone());
+            usuario.setTelefone(
+                    dto.getTelefone()
+            );
 
-            usuario.setEmail(dto.getEmail());
-            usuario.setSenha(dto.getSenha());
+            usuario.setEmail(
+                    dto.getEmail()
+            );
+
+            usuario.setSenha(
+                    dto.getSenha()
+            );
 
             usuario.setRole(Role.ATLETA);
+
             usuario.setAtivo(true);
 
             UsuarioModel usuarioSalvo =
                     usuarioService.salvar(usuario);
 
             // =========================
-            // CRIAR ATLETA
+            // ATLETA
             // =========================
 
             AtletaModel atleta =
@@ -188,11 +195,21 @@ public class AtletaController {
                     dto.getDataNascimento()
             );
 
-            atleta.setTelefone(dto.getTelefone());
+            atleta.setTelefone(
+                    dto.getTelefone()
+            );
 
-            atleta.setPosicao(dto.getPosicao());
-            atleta.setAltura(dto.getAltura());
-            atleta.setResponsavel(dto.getResponsavel());
+            atleta.setPosicao(
+                    dto.getPosicao()
+            );
+
+            atleta.setAltura(
+                    dto.getAltura()
+            );
+
+            atleta.setResponsavel(
+                    dto.getResponsavel()
+            );
 
             atleta.setAtivo(true);
 
@@ -213,47 +230,96 @@ public class AtletaController {
 
             return ResponseEntity
                     .status(500)
-                    .body("Erro ao cadastrar: "
-                            + e.getMessage());
+                    .body(
+                            "Erro ao cadastrar: "
+                                    + e.getMessage()
+                    );
 
         }
 
     }
+
+    // =========================
+    // COMPLETAR PERFIL
+    // =========================
+
     @PutMapping("/completar-perfil")
-public ResponseEntity<?> completarPerfil(
-        @RequestBody CompletarPerfilDTO dto,
-        HttpServletRequest request
-) {
+    public ResponseEntity<?> completarPerfil(
+            @RequestBody CompletarPerfilDTO dto,
+            HttpServletRequest request
+    ) {
 
-    try {
+        try {
 
-        String email =
-                (String) request.getAttribute("email");
+            String email =
+                    (String) request.getAttribute("email");
 
-        AtletaModel atleta =
-                atletaService.completarPerfil(
-                        dto,
-                        email
-                );
+            AtletaModel atleta =
+                    atletaService.completarPerfil(
+                            dto,
+                            email
+                    );
 
-        return ResponseEntity.ok(
-                AtletaMapper.toDTO(atleta)
-        );
+            return ResponseEntity.ok(
+                    AtletaMapper.toDTO(atleta)
+            );
+
+        }
+
+        catch (Exception e) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            Map.of(
+                                    "erro",
+                                    e.getMessage()
+                            )
+                    );
+
+        }
 
     }
-    catch (Exception e) {
 
-        return ResponseEntity
-                .badRequest()
-                .body(
-                        Map.of(
-                                "erro",
-                                e.getMessage()
-                        )
-                );
+    // =========================
+    // ATIVAR ATLETA
+    // =========================
+
+    @PutMapping("/{id}/ativar")
+    public ResponseEntity<?> ativarAtleta(
+            @PathVariable Long id,
+            HttpServletRequest request
+    ) {
+
+        try {
+
+            String email =
+                    (String) request.getAttribute("email");
+
+            atletaService.ativarAtleta(
+                    id,
+                    email
+            );
+
+            return ResponseEntity.ok(
+                    "Atleta ativado"
+            );
+
+        }
+
+        catch (Exception e) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                            Map.of(
+                                    "erro",
+                                    e.getMessage()
+                            )
+                    );
+
+        }
 
     }
-
-}
 
 }
