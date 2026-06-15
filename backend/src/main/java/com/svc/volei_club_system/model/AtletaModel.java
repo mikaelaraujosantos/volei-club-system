@@ -40,6 +40,7 @@ public class AtletaModel {
 
     private Boolean perfilCompleto;
 
+
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     @JsonIgnore

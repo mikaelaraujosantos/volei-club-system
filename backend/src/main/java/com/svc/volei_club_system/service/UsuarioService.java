@@ -31,8 +31,8 @@ public class UsuarioService {
 
     }
 
-    // 🔥 ativar usuário automaticamente
-    usuario.setAtivo(true);
+    
+    usuario.setAtivo(false);
 
     // definir role
     usuario.setRole(Role.ATLETA);

@@ -177,7 +177,7 @@ public class AtletaController {
 
             usuario.setRole(Role.ATLETA);
 
-            usuario.setAtivo(true);
+            usuario.setAtivo(false);
 
             UsuarioModel usuarioSalvo =
                     usuarioService.salvar(usuario);
@@ -211,7 +211,7 @@ public class AtletaController {
                     dto.getResponsavel()
             );
 
-            atleta.setAtivo(true);
+            atleta.setAtivo(false);
 
             atleta.setUsuario(usuarioSalvo);
 
