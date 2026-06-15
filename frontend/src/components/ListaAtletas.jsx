@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function ListaAtletas() {
+export default function ListaAtletas({
+  somenteInativos = false
+}) {
 
   const [atletas, setAtletas] = useState([]);
   const [carregando, setCarregando] = useState(true);
@@ -90,6 +92,13 @@ export default function ListaAtletas() {
     }
 
   }
+
+
+  function visualizarAtleta(id) {
+
+  navigate(`/visualizar/${id}`);
+
+}
 
   // =========================
   // EDITAR
@@ -248,15 +257,30 @@ export default function ListaAtletas() {
   // =========================
 
   const atletasFiltrados =
-    atletas.filter(atleta =>
+    atletas
+      .filter(atleta => {
 
-      atleta.nome
-        .toLowerCase()
-        .includes(
-          busca.toLowerCase()
-        )
+        // ABA APROVAÇÕES
+        if (somenteInativos) {
 
-    );
+          return !atleta.ativo;
+
+        }
+
+        // ABA NORMAL
+        return atleta.ativo;
+
+      })
+
+      .filter(atleta =>
+
+        atleta.nome
+          .toLowerCase()
+          .includes(
+            busca.toLowerCase()
+          )
+
+      );
 
   // =========================
   // LOADING
@@ -321,7 +345,7 @@ export default function ListaAtletas() {
 
         <input
           type="text"
-          placeholder="🔍 Buscar atleta..."
+          placeholder=" Buscar atleta"
           value={busca}
           onChange={(e) =>
             setBusca(
@@ -337,7 +361,10 @@ export default function ListaAtletas() {
 
       <h2>
 
-        Atletas cadastrados
+        {somenteInativos
+          ? "Atletas aguardando aprovação"
+          : "Atletas cadastrados"}
+
         {" "}
         ({atletasFiltrados.length})
 
@@ -403,62 +430,88 @@ export default function ListaAtletas() {
 
                       {atleta.ativo
                         ? "Ativo"
-                        : "Inativo"}
+                        : "Pendente"}
 
                     </span>
 
                   </td>
 
-                  <td>
+                 <td>
 
-                    <button
-                      className="btn-sm btn-success"
-                      onClick={() =>
-                        editarAtleta(
-                          atleta.id
-                        )
-                      }
-                    >
+  {!somenteInativos ? (
 
-                      Editar
+    <>
 
-                    </button>
+      <button
+        className="btn-sm"
+        onClick={() =>
+          visualizarAtleta(
+            atleta.id
+          )
+        }
+      >
+        Visualizar
+      </button>
 
-                    {" "}
+      {" "}
 
-                    {atleta.ativo ? (
+      <button
+        className="btn-sm btn-success"
+        onClick={() =>
+          editarAtleta(
+            atleta.id
+          )
+        }
+      >
+        Editar
+      </button>
 
-                      <button
-                        className="btn-sm btn-danger"
-                        onClick={() =>
-                          excluirAtleta(
-                            atleta.id
-                          )
-                        }
-                      >
+      {" "}
 
-                        Inativar
+      <button
+        className="btn-sm btn-danger"
+        onClick={() =>
+          excluirAtleta(
+            atleta.id
+          )
+        }
+      >
+        Inativar
+      </button>
 
-                      </button>
+    </>
 
-                    ) : (
+  ) : (
 
-                      <button
-                        className="btn-sm btn-success"
-                        onClick={() =>
-                          ativarAtleta(
-                            atleta.id
-                          )
-                        }
-                      >
+    <>
+      <button
+        className="btn-sm"
+        onClick={() =>
+          visualizarAtleta(
+            atleta.id
+          )
+        }
+      >
+        Visualizar
+      </button>
 
-                        Ativar
+      {" "}
 
-                      </button>
+      <button
+        className="btn-sm btn-success"
+        onClick={() =>
+          ativarAtleta(
+            atleta.id
+          )
+        }
+      >
+        Aprovar
+      </button>
+    </>
 
-                    )}
+  )}
 
-                  </td>
+</td>
 
                 </tr>
 

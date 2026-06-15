@@ -92,14 +92,39 @@ function CompletarCadastro() {
 
         <div className="area-expandida ativa">
 
-          <input
-            className="input"
-            placeholder="Posição"
-            value={posicao}
-            onChange={(e) =>
-              setPosicao(e.target.value)
-            }
-          />
+          <select
+  className="input"
+  value={posicao}
+  onChange={(e) =>
+    setPosicao(e.target.value)
+  }
+>
+
+  <option value="">
+    Não definido
+  </option>
+
+  <option value="Levantador">
+    Levantador
+  </option>
+
+  <option value="Ponteiro">
+    Ponteiro
+  </option>
+
+  <option value="Oposto">
+    Oposto
+  </option>
+
+  <option value="Central">
+    Central
+  </option>
+
+  <option value="Líbero">
+    Líbero
+  </option>
+
+</select>
 
           <input
             className="input"

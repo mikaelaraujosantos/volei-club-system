@@ -122,7 +122,7 @@ function Inicio() {
 
         if (!data.perfilCompleto) {
 
-          navigate("/completar-cadastro")
+          navigate("/completar-perfil")
 
         }
 

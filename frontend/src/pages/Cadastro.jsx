@@ -179,52 +179,11 @@ function Cadastro() {
 
       if (response.ok) {
 
-        // =========================
-        // LOGIN AUTOMÁTICO
-        // =========================
+        alert(
+          "Cadastro realizado com sucesso!\n\nSeu perfil está aguardando aprovação do administrador."
+        )
 
-        const loginResponse = await fetch(
-          "http://localhost:8080/auth/login",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              email,
-              senha
-            })
-          }
-        );
-
-        if (loginResponse.ok) {
-
-          const data =
-            await loginResponse.json();
-
-          localStorage.setItem(
-            "token",
-            data.token
-          );
-
-          localStorage.setItem(
-            "role",
-            data.role
-          );
-
-          // redireciona para completar perfil
-
-          navigate("/completar-perfil");
-
-        } else {
-
-          alert(
-            "Cadastro realizado, mas erro no login automático"
-          );
-
-          navigate("/");
-
-        }
+        navigate("/")
 
       }
 
